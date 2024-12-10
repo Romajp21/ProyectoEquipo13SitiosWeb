@@ -1,0 +1,52 @@
+﻿@page
+@model AsistenteAdministrativo.Pages.CRUDS.FE_TipoDeEmpleadoModel
+@{
+    ViewData["Title"] = "Gestión de Tipo de Empleado";
+}
+
+<h2>Gestión de Tipo de Empleado</h2>
+
+<form method="post" asp-page-handler="Registrar">
+    <div class="form-group">
+        <label>Tipo de Empleado</label>
+        <input asp-for="NuevoTipoDeEmpleado.TipoDeEmpleado" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>Estado</label>
+        <input asp-for="NuevoTipoDeEmpleado.Estado" class="form-check-input" type="checkbox" />
+    </div>
+    <button type="submit" class="btn btn-primary">Guardar</button>
+</form>
+
+<table class="table table-bordered mt-3">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Tipo de Empleado</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var tipo in Model.TiposDeEmpleado)
+        {
+            <tr>
+                <td>@tipo.IdTipodeEmpleado</td>
+                <td>@tipo.TipoDeEmpleado</td>
+                <td>@(tipo.Estado ? "Activo" : "Inactivo")</td>
+                <td>
+                    <form method="post" asp-page-handler="Actualizar">
+                        <input type="hidden" name="id" value="@tipo.IdTipodeEmpleado" />
+                        <button type="submit" class="btn btn-warning btn-sm">Editar</button>
+                    </form>
+                    <form method="post" asp-page-handler="Eliminar">
+                        <input type="hidden" name="id" value="@tipo.IdTipodeEmpleado" />
+                        <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<p>@Model.Mensaje</p>

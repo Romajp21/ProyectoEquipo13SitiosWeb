@@ -1,0 +1,240 @@
+﻿@page
+@model AsistenteAdministrativo.Pages.CRUDS.CRUD_ArtistaModel
+@{
+    ViewData["Title"] = "Gestión de Artistas";
+}
+
+<div class="container my-4">
+    <h2 class="text-center">Tablero Administrativo</h2>
+    <h3 class="text-center">Gestión de Artistas</h3>
+
+    <!-- Botón para agregar un nuevo artista -->
+    <div class="text-end mb-3">
+        <a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#crearModal">+ Agregar Artista</a>
+    </div>
+
+    <!-- Tabla de Artistas -->
+<table class="table table-bordered table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Teléfono</th>
+            <th>Correo</th>
+            <th>Rol</th>
+            <th>Especialidades</th>
+            <th>Estado</th> <!-- Campo solo de visualización -->
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.ListaArtistas != null && Model.ListaArtistas.Any())
+        {
+            @foreach (var artista in Model.ListaArtistas)
+            {
+                <tr>
+                    <td>@artista.IdArtista</td>
+                    <td>@artista.Nombre</td>
+                    <td>@artista.Apellidos</td>
+                    <td>@artista.Telefono</td>
+                    <td>@artista.Correo</td>
+                    <td>@Model.ListaRoles.FirstOrDefault(r => r.IdRole == artista.IdRole)?.Role</td>
+                    <td>
+                        @if (artista.Especialidades != null && artista.Especialidades.Any())
+                        {
+                            @foreach (var especialidad in artista.Especialidades)
+                            {
+                                <span class="badge bg-secondary">@especialidad</span>
+                            }
+                        }
+                        else
+                        {
+                            <span>Sin Especialidades</span>
+                        }
+                    </td>
+                    <td>@(artista.Estado ? "Activo" : "Inactivo")</td> <!-- Campo de solo visualización -->
+                    <td>
+                        <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editarModal"
+                                data-id="@artista.IdArtista"
+                                data-nombre="@artista.Nombre"
+                                data-apellidos="@artista.Apellidos"
+                                data-telefono="@artista.Telefono"
+                                data-correo="@artista.Correo"
+                                data-role="@artista.IdRole"
+                                data-especialidades="@string.Join(",", artista.Especialidades)">
+                            Editar
+                        </button>
+
+                        <form method="post" asp-page-handler="Eliminar" class="d-inline">
+                            <input type="hidden" name="IdArtistaEliminar" value="@artista.IdArtista" />
+                            <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="9" class="text-center">No hay artistas registrados.</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+</div>
+
+<!-- Modal para Crear Artista -->
+<!-- Modal para Crear Artista -->
+<div class="modal fade" id="crearModal" tabindex="-1" aria-labelledby="crearModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="crearModalLabel">Agregar Artista</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" asp-page-handler="Crear">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="Nombre" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="Nombre" name="NuevoArtista.Nombre" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="Apellidos" class="form-label">Apellidos</label>
+                        <input type="text" class="form-control" id="Apellidos" name="NuevoArtista.Apellidos" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="Telefono" class="form-label">Teléfono</label>
+                        <input type="text" class="form-control" id="Telefono" name="NuevoArtista.Telefono" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="Correo" class="form-label">Correo</label>
+                        <input type="email" class="form-control" id="Correo" name="NuevoArtista.Correo" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="Role" class="form-label">Rol</label>
+                        <select class="form-select" id="Role" name="NuevoArtista.IdRole" required>
+                            <option value="" disabled selected>Seleccione un rol</option>
+                            @foreach (var role in Model.ListaRoles)
+                            {
+                                <option value="@role.IdRole">@role.Role</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="Especialidades" class="form-label">Especialidades</label>
+                        <select class="form-select" id="Especialidades" name="NuevoArtista.Especialidades" multiple>
+                            @foreach (var especialidad in Model.ListaEspecialidades)
+                            {
+                                <option value="@especialidad.IdEspecialidad">@especialidad.NombreEspecialidad</option>
+                            }
+                        </select>
+                        <small class="text-muted">Mantenga presionada la tecla Ctrl para seleccionar varias especialidades.</small>
+                    </div>
+                    <input type="hidden" name="NuevoArtista.Estado" value="false" /> <!-- Artista creado como inactivo -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Modal para Editar Artista -->
+<div class="modal fade" id="editarModal" tabindex="-1" aria-labelledby="editarModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editarModalLabel">Editar Artista</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" asp-page-handler="Editar">
+                <div class="modal-body">
+                    <input type="hidden" id="editarIdArtista" name="ArtistaEditar.IdArtista" />
+                    <div class="mb-3">
+                        <label for="editarNombre" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="editarNombre" name="ArtistaEditar.Nombre" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="editarApellidos" class="form-label">Apellidos</label>
+                        <input type="text" class="form-control" id="editarApellidos" name="ArtistaEditar.Apellidos" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="editarTelefono" class="form-label">Teléfono</label>
+                        <input type="text" class="form-control" id="editarTelefono" name="ArtistaEditar.Telefono" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="editarCorreo" class="form-label">Correo</label>
+                        <input type="email" class="form-control" id="editarCorreo" name="ArtistaEditar.Correo" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="editarRole" class="form-label">Rol</label>
+                        <select class="form-select" id="editarRole" name="ArtistaEditar.IdRole" required>
+                            <option value="" disabled>Seleccione un rol</option>
+                            @foreach (var role in Model.ListaRoles)
+                            {
+                                <option value="@role.IdRole">@role.Role</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editarEspecialidades" class="form-label">Especialidades</label>
+                        <select class="form-select" id="editarEspecialidades" name="ArtistaEditar.Especialidades" multiple>
+                            @foreach (var especialidad in Model.ListaEspecialidades)
+                            {
+                                <option value="@especialidad.IdEspecialidad">@especialidad.NombreEspecialidad</option>
+                            }
+                        </select>
+                        <small class="text-muted">Mantenga presionada la tecla Ctrl para seleccionar varias especialidades.</small>
+                    </div>
+                    <div class="form-check d-none">
+                        <input type="checkbox" class="form-check-input" id="editarEstado" name="ArtistaEditar.Estado" disabled />
+                        <label for="editarEstado" class="form-check-label">Estado</label>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const editarModal = document.getElementById('editarModal');
+        editarModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+
+            const id = button.getAttribute('data-id');
+            const nombre = button.getAttribute('data-nombre');
+            const apellidos = button.getAttribute('data-apellidos');
+            const telefono = button.getAttribute('data-telefono');
+            const correo = button.getAttribute('data-correo');
+            const role = button.getAttribute('data-role');
+            const especialidades = button.getAttribute('data-especialidades')?.split(',');
+            const estado = button.getAttribute('data-estado') === "True";
+
+            document.getElementById('editarIdArtista').value = id;
+            document.getElementById('editarNombre').value = nombre;
+            document.getElementById('editarApellidos').value = apellidos;
+            document.getElementById('editarTelefono').value = telefono || '';
+            document.getElementById('editarCorreo').value = correo || '';
+            document.getElementById('editarRole').value = role;
+
+            const especialidadesSelect = document.getElementById('editarEspecialidades');
+            Array.from(especialidadesSelect.options).forEach(option => {
+                option.selected = especialidades?.includes(option.value);
+            });
+
+            document.getElementById('editarEstado').checked = estado;
+        }); 
+    });
+</script>

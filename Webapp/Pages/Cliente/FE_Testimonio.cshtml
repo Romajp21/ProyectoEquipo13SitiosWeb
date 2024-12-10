@@ -1,0 +1,120 @@
+﻿@page
+@model Webapp.Pages.Cliente.FE_TestimonioModel
+@{
+    ViewData["Title"] = "Dejar Testimonio";
+}
+
+<html>
+<head>
+    <title>Dejar Testimonio - Ink Studio</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: #000;
+            color: #fff;
+        }
+
+        .container {
+            padding: 30px;
+        }
+
+        .form-control {
+            margin-bottom: 15px;
+        }
+
+        .form-control label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-control select,
+        .form-control textarea,
+        .form-control button {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .form-control button {
+            background-color: #ffcc00;
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .form-control button:hover {
+            background-color: #ffa500;
+        }
+
+        .message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .message.success {
+            background-color: #28a745;
+            color: #fff;
+        }
+
+        .message.error {
+            background-color: #dc3545;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Dejar Testimonio</h1>
+        <p>Por favor, selecciona una cita y deja tu testimonio sobre nuestro servicio.</p>
+
+        @if (!string.IsNullOrEmpty(Model.Mensaje))
+        {
+            <div class="message @(Model.Resultado ? "success" : "error")">
+                @Model.Mensaje
+            </div>
+        }
+
+        <form method="post">
+            <div class="form-control">
+                <label for="IdCita">Selecciona una Cita:</label>
+                <select id="IdCita" name="NuevoTestimonio.IdCita" required>
+                    <option value="">-- Selecciona una cita --</option>
+                    @foreach (var cita in Model.CitasSinTestimonio)
+                    {
+                        <option value="@cita.IdCita">@cita.Fecha.ToString("dd/MM/yyyy") - @cita.Descripcion</option>
+                    }
+                </select>
+            </div>
+
+            <div class="form-control">
+                <label for="Testimonio">Escribe tu Testimonio:</label>
+                <textarea id="Testimonio" name="NuevoTestimonio.Testimonio" rows="5" required></textarea>
+            </div>
+
+            <div class="form-control">
+                <label for="Calificacion">Calificación:</label>
+                <select id="Calificacion" name="NuevoTestimonio.Calificacion" required>
+                    <option value="">-- Selecciona una calificación --</option>
+                    @for (int i = 1; i <= 5; i++)
+                    {
+                        <option value="@i">@i estrella(s)</option>
+                    }
+                </select>
+            </div>
+
+            <div class="form-control">
+                <button type="submit">Enviar Testimonio</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

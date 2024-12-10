@@ -1,0 +1,175 @@
+﻿@page
+@model AsistenteAdministrativo.Pages.CRUDS.FE_MembresiaContenidoModel
+@{
+    ViewData["Title"] = "Gestión de Contenido de Membresías";
+}
+
+<div class="container-fluid mt-4">
+    <!-- Mensaje de información -->
+    @if (!string.IsNullOrEmpty(Model.Mensaje))
+    {
+        <div class="alert alert-info text-center" role="alert">
+            @Model.Mensaje
+        </div>
+    }
+
+    <!-- Contenedor ajustado -->
+    <div class="row justify-content-center">
+        <div class="col-lg-40 col-md-12">
+            <!-- Título -->
+            <div class="row">
+                <div class="col-12 text-center mb-4">
+                    <h1 class="text-primary fw-bold">📦 Gestión de Contenido de Membresías</h1>
+                </div>
+            </div>
+
+
+
+            <!-- Botón para abrir el modal -->
+            <div class="row mb-3">
+                <div class="col-12 text-end">
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalContenido">
+                        <i class="fas fa-plus"></i> Agregar Nuevo Contenido
+                    </button>
+                </div>
+            </div>
+
+            <!-- Modal -->
+            <div class="modal fade" id="modalContenido" tabindex="-1" aria-labelledby="modalContenidoLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title" id="modalContenidoLabel">
+                                @(Model.NuevoContenido.IdMembresContenido == 0 ? "Agregar Nuevo Contenido" : "Actualizar Contenido")
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form method="post" asp-page-handler="Guardar">
+                                <input type="hidden" asp-for="NuevoContenido.IdMembresContenido" />
+
+                                <div class="mb-3">
+                                    <label for="IdMembresia" class="form-label">Membresía</label>
+                                    <select asp-for="NuevoContenido.IdMembresia" class="form-control" required>
+                                        <option value="">Seleccione una Membresía</option>
+                                        @foreach (var membresia in Model.Membresias)
+                                        {
+                                            <option value="@membresia.IdMembresia">@membresia.NombreMembresia</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label asp-for="NuevoContenido.NombreContenido" class="form-label">Nombre del Contenido</label>
+                                    <input type="text" class="form-control" asp-for="NuevoContenido.NombreContenido" required />
+                                </div>
+                                <div class="mb-3">
+                                    <label asp-for="NuevoContenido.Comentario" class="form-label">Comentario</label>
+                                    <input type="text" class="form-control" asp-for="NuevoContenido.Comentario" />
+                                </div>
+                                <div class="mb-3">
+                                    <label asp-for="NuevoContenido.CreadoPor" class="form-label">Creado Por</label>
+                                    <input type="number" class="form-control" asp-for="NuevoContenido.CreadoPor" required />
+                                </div>
+                                <div class="mb-3">
+                                    <label asp-for="NuevoContenido.Estado" class="form-label">Estado</label>
+                                    <select asp-for="NuevoContenido.Estado" class="form-control">
+                                        <option value="true">Activo</option>
+                                        <option value="false">Inactivo</option>
+                                    </select>
+                                </div>
+
+                                <div class="d-flex justify-content-between">
+                                    <button type="submit" class="btn btn-success w-50">
+                                        @(Model.NuevoContenido.IdMembresContenido == 0 ? "Registrar" : "Actualizar")
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary w-50" data-bs-dismiss="modal">Cancelar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabla -->
+            <div class="card shadow-lg">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0">Contenidos Registrados</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-striped table-hover align-middle">
+                        <thead class="table-dark">
+                            <tr>
+                                <th class="text-center">ID Membresía</th>
+                                <th class="text-center">Membresía</th>
+                                <th class="text-center">Nombre Contenido</th>
+                                <th class="text-center">Comentario</th>
+                                <th class="text-center">Creado Por</th>
+                                <th class="text-center">Estado</th>
+                                <th class="text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var contenido in Model.Contenidos)
+                            {
+                                <tr>
+                                    <td class="text-center">@contenido.IdMembresia</td>
+                                    <td class="text-center">@contenido.NombreMembresia</td>
+                                    <td class="text-center">@contenido.NombreContenido</td>
+                                    <td class="text-center">@contenido.Comentario</td>
+                                    <td class="text-center">@contenido.CreadoPor</td>
+                                    <td class="text-center">
+                                        <span class="badge @(contenido.Estado ? "bg-success" : "bg-danger")">
+                                            @(contenido.Estado ? "Activo" : "Inactivo")
+                                        </span>
+                                    </td>
+                                    <td class="text-center">
+                                        <a href="javascript:void(0);" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#modalContenido" onclick="cargarContenido(@contenido.IdMembresContenido)">Editar</a>
+                                        <form method="post" asp-page-handler="Eliminar" asp-route-id="@contenido.IdMembresContenido" class="d-inline" onsubmit="return confirm('¿Está seguro de eliminar este contenido?');">
+                                            <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Script para cargar los datos del contenido en el modal
+    function cargarContenido(id) {
+        fetch(`?handler=CargarParaActualizar&id=${id}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+
+                document.getElementById("modalContenidoLabel").innerText = "Actualizar Contenido";
+
+                // Asignar valores a los campos del formulario
+                document.querySelector("input[name='NuevoContenido.IdMembresContenido']").value = data.idMembresContenido;
+                document.querySelector("select[name='NuevoContenido.IdMembresia']").value = data.idMembresia;
+                document.querySelector("input[name='NuevoContenido.NombreContenido']").value = data.nombreContenido;
+                document.querySelector("input[name='NuevoContenido.Comentario']").value = data.comentario;
+                document.querySelector("input[name='NuevoContenido.CreadoPor']").value = data.creadoPor;
+                document.querySelector("select[name='NuevoContenido.Estado']").value = data.estado ? "true" : "false";
+            })
+            .catch(error => console.error('Error al cargar el contenido:', error));
+    }
+
+    // Script para eliminar automáticamente el mensaje después de 5 segundos
+    document.addEventListener("DOMContentLoaded", function () {
+        const alert = document.querySelector(".alert");
+        if (alert) {
+            setTimeout(() => {
+                alert.classList.add("fade");
+                setTimeout(() => alert.remove(), 500);
+            }, 5000);
+        }
+    });
+</script>

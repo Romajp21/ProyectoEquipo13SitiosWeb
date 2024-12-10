@@ -1,0 +1,253 @@
+﻿@page "{idHorarioArtista?}"
+@model Artistas.Pages.CRUD.FE_HorarioArtistaModel
+@{
+    ViewData["Title"] = "Gestión de Bloqueo Agenda de Artistas";
+}
+
+<div class="container mt-4">
+
+    @if (TempData["Mensaje"] != null)
+    {
+
+        <div id="alertMessage" class="alert alert-info alert-dismissible fade show" role="alert">
+            @TempData["Mensaje"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    <!-- Título -->
+    <div class="row">
+        <div class="col-12 text-center mb-4">
+            <h1 class="text-primary fw-bold">🕒 Gestión de Creacion Agenda de Artistas</h1>
+        </div>
+    </div>
+
+    <!-- Botón para abrir el modal -->
+    <div class="row mb-3">
+        <div class="col-12 text-end">
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalHorario" id="addHorarioBtn">
+                <i class="fas fa-plus"></i> Agregar Nuevo Horario
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="modalHorario" tabindex="-1" aria-labelledby="modalHorarioLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="modalHorarioLabel">
+                        @(Model.HorarioForm.IdHorarioArtista > 0 ? "Actualizar Horario" : "Registrar Horario")
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" asp-page-handler="Guardar">
+                        <input type="hidden" id="HiddenIdHorarioArtista" name="HorarioForm.IdHorarioArtista" value="@Model.HorarioForm.IdHorarioArtista" />
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="IdArtista" class="form-label">ID del Artista</label>
+                                <input type="number" id="IdArtista" name="HorarioForm.IdArtista"
+                                       value="@Model.HorarioForm.IdArtista"
+                                       class="form-control" />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="Fecha" class="form-label">Fecha Base</label>
+                                <input type="date" id="Fecha" name="HorarioForm.Fecha"
+                                       value="@Model.HorarioForm.Fecha.ToString("yyyy-MM-dd")"
+                                       class="form-control" />
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Días de la Semana</label>
+                            <div class="d-flex flex-wrap gap-3">
+                                @foreach (var dia in Model.DiasSemana)
+                                {
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="Dia_@dia.Key" name="DiasSeleccionados" value="@dia.Key" />
+                                        <label class="form-check-label" for="Dia_@dia.Key">@dia.Value</label>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="HoraInicio" class="form-label">Hora Inicio</label>
+                                <input type="time" id="HoraInicio" name="HorarioForm.HoraInicio"
+                                       value="@Model.HorarioForm.HoraInicio.ToString(@"hh\:mm")"
+                                       class="form-control" required />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="HoraFin" class="form-label">Hora Fin</label>
+                                <input type="time" id="HoraFin" name="HorarioForm.HoraFin"
+                                       value="@Model.HorarioForm.HoraFin.ToString(@"hh\:mm")" class="form-control" required />
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="Estado" class="form-label">Estado</label>
+                            <select id="Estado" name="HorarioForm.Estado" class="form-select" required>
+                                @Html.Raw(Model.RenderDropdownEstado())
+                            </select>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <button type="submit" class="btn btn-success w-50">Guardar</button>
+                            <button type="button" class="btn btn-outline-secondary w-50" data-bs-dismiss="modal">Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-lg">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0">Horarios Registrados</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID Artista</th>
+                                <th>Fecha</th>
+                                <th>Hora Inicio</th>
+                                <th>Hora Fin</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var horario in Model.Horarios)
+                            {
+                                <tr>
+                                    <td>@horario.IdArtista</td>
+                                    <td>@horario.Fecha.ToString("dd/MM/yyyy")</td>
+                                    <td>@horario.HoraInicio</td>
+                                    <td>@horario.HoraFin</td>
+                                    <td>
+                                        <span class="badge @(horario.Estado ? "bg-success" : "bg-danger")">
+                                            @(horario.Estado ? "Activo" : "Inactivo")
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <button type="button"
+                                                class="btn btn-warning btn-sm edit-horario-btn"
+                                                data-id="@horario.IdHorarioArtista"
+                                                data-artista="@horario.IdArtista"
+                                                data-fecha="@horario.Fecha.ToString("yyyy-MM-dd")"
+                                                data-inicio="@horario.HoraInicio"
+                                                data-fin="@horario.HoraFin"
+                                                data-estado="@horario.Estado">
+                                            Actualizar
+                                        </button>
+
+                                        <form method="post" asp-page-handler="Eliminar" asp-route-id="@horario.IdHorarioArtista" class="d-inline">
+                                            <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Inicialización de variables
+        const modalHorarioElement = document.getElementById('modalHorario');
+        let modalHorario;
+
+        // Verificar si el modal existe en el DOM antes de inicializar
+        if (modalHorarioElement) {
+            modalHorario = new bootstrap.Modal(modalHorarioElement);
+        }
+
+        const addHorarioButton = document.getElementById('addHorarioBtn');
+        const editButtons = document.querySelectorAll('.edit-horario-btn');
+
+        // Función para limpiar el formulario con valores predeterminados
+        function limpiarFormulario() {
+            const now = new Date();
+            document.getElementById('HiddenIdHorarioArtista').value = "";
+            document.getElementById('IdArtista').value = ""; // ID vacío para nuevos registros
+            document.getElementById('Fecha').value = now.toISOString().split("T")[0]; // Fecha actual
+            document.getElementById('HoraInicio').value = "08:00"; // Hora de inicio predeterminada
+            document.getElementById('HoraFin').value = "17:00"; // Hora de fin predeterminada
+            document.getElementById('Estado').value = "true"; // Estado predeterminado: Activo
+
+            // Limpia los checkboxes
+            const checkboxes = document.querySelectorAll('input[name="DiasSeleccionados"]');
+            checkboxes.forEach((checkbox) => {
+                checkbox.checked = false;
+            });
+        }
+
+        // Abrir modal para registrar un nuevo horario
+        if (addHorarioButton) {
+            addHorarioButton.addEventListener("click", function () {
+                limpiarFormulario();
+                modalHorario.show(); // Mostrar el modal
+            });
+        }
+
+        // Abrir modal para actualizar un horario existente
+        if (editButtons) {
+            editButtons.forEach((button) => {
+                button.addEventListener("click", function () {
+                    try {
+                        // Rellenar formulario con los datos del botón
+                        document.getElementById('HiddenIdHorarioArtista').value = button.dataset.id;
+                        document.getElementById('IdArtista').value = button.dataset.artista;
+                        document.getElementById('Fecha').value = button.dataset.fecha;
+                        document.getElementById('HoraInicio').value = button.dataset.inicio;
+                        document.getElementById('HoraFin').value = button.dataset.fin;
+
+                        // Asignar explícitamente el estado
+                        document.getElementById('Estado').value = button.dataset.estado === "true" ? "true" : "false";
+
+                        // Manejo de checkboxes para días de la semana
+                        const diasSeleccionados = button.dataset.diasSeleccionados
+                            ? button.dataset.diasSeleccionados.split(',')
+                            : [];
+                        const checkboxes = document.querySelectorAll('input[name="DiasSeleccionados"]');
+                        checkboxes.forEach((checkbox) => {
+                            checkbox.checked = diasSeleccionados.includes(checkbox.value);
+                        });
+
+                        modalHorario.show(); // Mostrar el modal
+                    } catch (error) {
+                        console.error("Error al cargar datos para editar:", error);
+                    }
+                });
+            });
+        }
+
+        // Asegurarse de que el modal funcione correctamente después de acciones del servidor
+        modalHorarioElement.addEventListener('hidden.bs.modal', function () {
+            limpiarFormulario(); // Limpia el formulario al cerrar el modal
+        });
+    });
+</script>
+<script>
+    // Esperar 5 segundos y luego eliminar el mensaje
+    document.addEventListener("DOMContentLoaded", function () {
+        const alertMessage = document.getElementById("alertMessage");
+        if (alertMessage) {
+            setTimeout(() => {
+                alertMessage.classList.remove("show"); // Oculta el mensaje con la animación de Bootstrap
+                alertMessage.classList.add("fade");
+                setTimeout(() => {
+                    alertMessage.remove(); // Elimina el elemento del DOM
+                }, 500); // Tiempo adicional para la transición de fade
+            }, 5000); // 5 segundos antes de ocultar
+        }
+    });
+</script>

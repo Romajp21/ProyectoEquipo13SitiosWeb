@@ -1,0 +1,297 @@
+﻿@page "{idArtista?}"
+@model Webapp.Pages.Cliente.FE_CitasModel
+@{
+    ViewData["Title"] = "Gestión de Citas";
+}
+
+<div class="container mt-4">
+    <!-- Título -->
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <h1 class="text-primary fw-bold">📅 Gestión de Citas</h1>
+        </div>
+    </div>
+
+    <!-- Botón para abrir el modal -->
+    <div class="row mb-3">
+        <div class="col-12 text-end">
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCita">
+                <i class="fas fa-plus"></i> Registrar o Actualizar Cita
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="modalCita" tabindex="-1" aria-labelledby="modalCitaLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="modalCitaLabel">
+                        @(Model.CitaForm.IdCita > 0 ? "Actualizar Cita" : "Registrar Cita")
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" asp-page-handler="Guardar">
+                        <!-- Campos ocultos para transferencia de datos -->
+                        <input type="hidden" id="IdArtista" name="CitaForm.IdArtista" value="@Model.CitaForm.IdArtista" />
+                        <input type="hidden" id="IdHorarioArtista" name="CitaForm.IdHorarioArtista" value="@Model.CitaForm.IdHorarioArtista" />
+                        <input type="hidden" id="HoraInicio" name="CitaForm.HoraInicio" value="@Model.CitaForm.HoraInicio.ToString(@"hh\:mm\:ss")" />
+                        <input type="hidden" id="HoraFin" name="CitaForm.HoraFin" value="@Model.CitaForm.HoraFin.ToString(@"hh\:mm\:ss")" />
+
+                        <input type="hidden" name="CitaForm.IdCita" value="@Model.CitaForm.IdCita" />
+
+
+                        <!-- ID Cliente -->
+                        <div class="form-group mb-3">
+                            <label for="IdCliente">ID Cliente</label>
+                            <input type="text" id="IdCliente" name="CitaForm.IdCliente" value="@Model.CitaForm.IdCliente" class="form-control" readonly />
+                        </div>
+
+                        <!-- Selección de Artista -->
+                        <div class="form-group mb-3">
+                            <label for="IdArtista">Seleccione un Artista</label>
+                            <select id="IdArtistaDropdown" class="form-control" onchange="filtrarHorariosPorArtista(this)">
+                                <option value="0" selected="selected">Cualquier Artista</option>
+                                @foreach (var artista in Model.ArtistasDisponibles)
+                                {
+                                    @if (artista.IdArtista == Model.CitaForm.IdArtista)
+                                    {
+                                        <option value="@artista.IdArtista" selected="selected">@artista.Nombre @artista.Apellidos</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@artista.IdArtista">@artista.Nombre @artista.Apellidos</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+
+                        <!-- Selección de Fecha Disponible -->
+                        <div class="form-group mb-3">
+                            <label for="FechaDisponible">Seleccione una Fecha Disponible</label>
+                            <select id="FechaDisponible" name="CitaForm.Fecha" class="form-control" required onchange="updateHoras(this)">
+                                @if (Model.FechasDisponibles.Any())
+                                {
+                                    foreach (var fecha in Model.FechasDisponibles)
+                                    {
+                                        <option value="@fecha.Fecha.ToString("yyyy-MM-ddTHH:mm:ss")"
+                                                data-idartista="@fecha.IdArtista"
+                                                data-idhorarioartista="@fecha.IdHorarioArtista"
+                                                data-horainicio="@fecha.HoraInicio.ToString(@"hh\:mm")"
+                                                data-horafin="@fecha.HoraFin.ToString(@"hh\:mm")">
+                                            @fecha.Fecha.ToString("dd/MM/yyyy") - @fecha.HoraInicio.ToString(@"hh\:mm") a @fecha.HoraFin.ToString(@"hh\:mm")
+                                        </option>
+                                    }
+                                }
+                                else
+                                {
+                                    <option value="" disabled>No hay fechas disponibles</option>
+                                }
+                            </select>
+
+                        </div>
+                        <!-- Mostrar horarios seleccionados -->
+                        <div id="HorarioSeleccionado" class="alert alert-info" style="display:none;">
+                            <strong>Horario Seleccionado:</strong> <span id="SeleccionadoHoraInicio"></span> a <span id="SeleccionadoHoraFin"></span>
+                        </div>
+
+                        <!-- Campos ocultos -->
+                        <input type="hidden" id="HoraInicio" name="CitaForm.HoraInicio" />
+                        <input type="hidden" id="HoraFin" name="CitaForm.HoraFin" />
+
+                        <!-- Campo para IdFormulario -->
+                        <div class="form-group mb-3">
+                            <label for="IdFormulario">ID Formulario</label>
+                            <input type="number" id="IdFormulario" name="CitaForm.IdFormulario" class="form-control" placeholder="Ingrese el ID del formulario" />
+                        </div>
+
+                        <!-- Campo para Token -->
+                        <div class="form-group mb-3">
+                            <label for="Token">Token</label>
+                            <input type="number" id="Token" name="CitaForm.Token" class="form-control" placeholder="Ingrese el token de la cita" />
+                        </div>
+
+                        <!-- Descripción -->
+                        <div class="form-group mb-3">
+                            <label for="Descripcion">Descripción</label>
+                            <textarea id="Descripcion" name="CitaForm.Descripcion" class="form-control" placeholder="Descripción del tatuaje">@Model.CitaForm.Descripcion</textarea>
+                        </div>
+
+                        <!-- Botones -->
+                        <div class="d-flex justify-content-between">
+                            <button type="submit" class="btn btn-success w-50">Guardar</button>
+                            <button type="button" class="btn btn-outline-secondary w-50" data-bs-dismiss="modal">Cancelar</button>
+                        </div>
+                      
+
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla de citas registradas -->
+    <div class="card shadow-sm">
+        <div class="card-header bg-secondary text-white">
+            <h4 class="mb-0">Citas Registradas</h4>
+        </div>
+        <div class="card-body">
+            @if (Model.Citas.Count > 0)
+            {
+                <table class="table table-hover table-bordered text-center">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Cliente</th>
+                            <th>Artista</th>
+                            <th>Fecha</th>
+                            <th>Descripción</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var cita in Model.Citas)
+                        {
+                            <tr>
+                                <td>@cita.IdCliente</td>
+                                <td>@cita.IdArtista</td>
+                                <td>
+                                    @cita.Fecha.ToString("dd/MM/yyyy")
+                                    @(cita.HoraInicio != null && cita.HoraFin != null
+                                        ? $"{cita.HoraInicio.ToString(@"hh\:mm")} - {cita.HoraFin.ToString(@"hh\:mm")}"
+                                        : "Hora no disponible")
+                                </td>
+                                <td>@cita.Descripcion</td>
+                                <td>@cita.Estado</td>
+                                <td>
+                                    <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#modalCita">Editar</button>
+                                    
+                                </td>
+                                <td>
+                                    <form method="post" asp-page-handler="Eliminar" asp-route-idCita="@cita.IdCita">
+                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Está seguro de que desea eliminar esta cita?');">
+                                            Eliminar
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <div class="alert alert-warning text-center">No hay citas registradas.</div>
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    function updateHoras(selectElement) {
+        const selectedOption = selectElement.options[selectElement.selectedIndex];
+
+        // Obtener los datos del horario seleccionado desde los atributos
+        const horaInicio = selectedOption.getAttribute("data-horainicio");
+        const horaFin = selectedOption.getAttribute("data-horafin");
+        const idArtista = selectedOption.getAttribute("data-idartista");
+        const idHorarioArtista = selectedOption.getAttribute("data-idhorarioartista");
+
+
+        // Actualizar los valores en los campos ocultos
+        document.getElementById("IdArtista").value = idArtista || 0; // Si no hay valor, asignar 0
+        document.getElementById("IdHorarioArtista").value = idHorarioArtista || "";
+        document.getElementById("HoraInicio").value = horaInicio || "";
+        document.getElementById("HoraFin").value = horaFin || "";
+        // Mostrar los valores seleccionados visualmente
+        if (horaInicio && horaFin) {
+            console.log("HoraInicio (Input):", document.getElementById("HoraInicio").value);
+            console.log("HoraFin (Input):", document.getElementById("HoraFin").value);
+            document.getElementById("HorarioSeleccionado").style.display = "block";
+        } else {
+            document.getElementById("HorarioSeleccionado").style.display = "none";
+        }
+
+        console.log(`Horario seleccionado: Inicio: ${horaInicio}, Fin: ${horaFin}`);
+    }
+
+    document.querySelector("form").addEventListener("submit", function (event) {
+        const horaInicio = document.getElementById("HoraInicio").value;
+        const horaFin = document.getElementById("HoraFin").value;
+
+        if (!horaInicio || !horaFin) {
+            alert("Por favor, selecciona un horario válido.");
+            event.preventDefault();
+        } else {
+            console.log("Formulario enviado con:", { horaInicio, horaFin });
+        }
+    });
+
+
+
+    function filtrarHorariosPorArtista(selectElement) {
+        const idArtista = selectElement.value; // Obtener el ID del artista seleccionado
+        const url = `?idArtista=${idArtista}&modal=true`; // Añadir el parámetro modal
+        window.location.href = url; // Recargar la página con el filtro aplicado
+    }
+
+
+   
+        function editarCita(idCita) {
+            // Redirigir al backend con el identificador de la cita para cargar los datos
+            const url = `?handler=Editar&idCita=${idCita}`;
+        window.location.href = url;
+        }
+    
+        function eliminarCita(idCita) {
+            if (confirm("¿Está seguro de que desea eliminar esta cita?")) {
+                // Redirigir al backend con el identificador de la cita para eliminarla
+                const url = `?handler=Eliminar&idCita=${idCita}`;
+        window.location.href = url;
+            }
+        }
+
+
+    function cargarCita(idCita) {
+        const url = `?handler=Editar&idCita=${idCita}`;
+        window.location.href = url;
+    }
+
+ 
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const abrirModal = '@TempData["AbrirModal"]' === 'True';
+        if (abrirModal) {
+            const modalCita = new bootstrap.Modal(document.getElementById('modalCita'));
+            modalCita.show();
+        }
+    });
+
+  
+        // Asigna valores desde el dropdown a los inputs ocultos justo antes de enviar el formulario
+        document.querySelector("form").addEventListener("submit", function (event) {
+        const selectElement = document.getElementById("FechaDisponible");
+        const selectedOption = selectElement.options[selectElement.selectedIndex];
+
+        // Captura los valores de data-horainicio y data-horafin
+        const horaInicio = selectedOption.getAttribute("data-horainicio");
+        const horaFin = selectedOption.getAttribute("data-horafin");
+
+        // Forzar asignación de valores a los inputs ocultos
+        document.getElementById("HoraInicio").value = horaInicio || "";
+        document.getElementById("HoraFin").value = horaFin || "";
+
+        console.log("Datos enviados al backend:");
+        console.log("HoraInicio:", document.getElementById("HoraInicio").value);
+        console.log("HoraFin:", document.getElementById("HoraFin").value);
+
+        // Validación final
+        if (!horaInicio || !horaFin) {
+            alert("Por favor, selecciona un horario válido.");
+        event.preventDefault(); // Detenemos el envío si los datos están vacíos
+            }
+        });
+</script>
+

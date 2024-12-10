@@ -1,0 +1,46 @@
+﻿@page
+@model Webapp.Pages.Cliente.FE_MembresiaActualModel
+@{
+    ViewData["Title"] = "Membresía Actual";
+}
+
+<div class="container text-center mt-5">
+    @if (Model.Membresia != null)
+    {
+        <div class="card shadow mx-auto" style="max-width: 400px; border-radius: 20px; background-color: #343a40; color: #fff;">
+            <div class="card-body">
+                <h2 class="card-title">@Model.Membresia.NombreMembresia</h2>
+                <h3 class="card-subtitle mb-3" style="color: #f39c12;">
+                    @(Model.Membresia.Precio == 0 ? "Gratis" : "$" + Model.Membresia.Precio.ToString("N2"))
+                </h3>
+                <p><strong>Fecha de Compra:</strong> @Model.Membresia.FechaCompra.ToShortDateString()</p>
+                <p><strong>Fecha de Expiración:</strong> @Model.Membresia.FechaExpiracion.ToShortDateString()</p>
+                <hr />
+                <h4>Beneficios:</h4>
+                <ul class="text-start">
+                    @foreach (var contenido in Model.Membresia.Contenidos)
+                    {
+                        <li><i class="fas fa-check-circle" style="color: #28a745;"></i> @contenido</li>
+                    }
+                </ul>
+                <div class="mt-4">
+                    @if (Model.Membresia.FechaExpiracion < DateTime.Now)
+                    {
+                        <button class="btn btn-warning" onclick="location.href='/Cliente/FE_RenovarMembresia';">Renovar Membresía</button>
+                    }
+                    else
+                    {
+                        <button class="btn btn-secondary disabled">Membresía Activa</button>
+                    }
+                    <button class="btn btn-info" onclick="location.href='/Cliente/FE_UpgradeMembresia';">Mejorar Membresía</button>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning mt-5">
+            No tienes una membresía activa actualmente.
+        </div>
+    }
+</div>

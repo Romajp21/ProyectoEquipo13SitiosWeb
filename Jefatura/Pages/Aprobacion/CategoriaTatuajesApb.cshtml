@@ -1,0 +1,113 @@
+﻿@page
+@model Jefatura.Pages.Aprobacion.CategoriaTatuajesApbModel
+@{
+    ViewData["Title"] = "Gestión de Categorías por Jefatura";
+}
+
+<div class="container my-4">
+    <h2 class="text-center">Gestión de Categorías</h2>
+
+    @if (TempData["Mensaje"] != null)
+    {
+        <div class="alert alert-success">@TempData["Mensaje"]</div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+
+    <!-- Tabla de Categorías -->
+    <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Categorias != null && Model.Categorias.Any())
+            {
+                @foreach (var categoria in Model.Categorias)
+                {
+                    <tr>
+                        <td>@categoria.IdCategoriaTatuajes</td>
+                        <td>@categoria.NombreCategoria</td>
+                        <td>@(categoria.Estado ? "Activo" : "Inactivo")</td>
+                        <td>
+                            <!-- Botón para Editar -->
+                            <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editarModal"
+                                    data-id="@categoria.IdCategoriaTatuajes"
+                                    data-nombre="@categoria.NombreCategoria"
+                                    data-estado="@categoria.Estado">
+                                Editar
+                            </button>
+
+                            <!-- Formulario para Eliminar -->
+                            <form method="post" asp-page-handler="Eliminar" class="d-inline">
+                                <input type="hidden" name="IdCategoriaEliminar" value="@categoria.IdCategoriaTatuajes" />
+                                <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="4" class="text-center">No hay categorías registradas.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal para Editar -->
+<div class="modal fade" id="editarModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" asp-page-handler="EditarJefatura">
+                <div class="modal-header">
+                    <h5 class="modal-title">Editar Categoría</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="editarId" name="CategoriaEditar.IdCategoriaTatuajes" />
+                    <div class="mb-3">
+                        <label for="editarNombre" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="editarNombre" name="CategoriaEditar.NombreCategoria" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="editarEstado" class="form-label">Estado</label>
+                        <select class="form-select" id="editarEstado" name="CategoriaEditar.Estado">
+                            <option value="true">Activo</option>
+                            <option value="false">Inactivo</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const editarModal = document.getElementById('editarModal');
+        editarModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+
+            const id = button.getAttribute('data-id');
+            const nombre = button.getAttribute('data-nombre');
+            const estado = button.getAttribute('data-estado') === "True";
+
+            document.getElementById('editarId').value = id;
+            document.getElementById('editarNombre').value = nombre || '';
+            document.getElementById('editarEstado').value = estado;
+        });
+    });
+</script>

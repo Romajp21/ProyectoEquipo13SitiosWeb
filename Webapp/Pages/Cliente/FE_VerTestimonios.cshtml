@@ -1,0 +1,70 @@
+﻿
+@page "/Cliente/FE_VerTestimonios"
+@model Webapp.Pages.Cliente.FE_VerTestimoniosModel
+
+@{
+    ViewData["Title"] = "Todos los Testimonios";
+}
+
+<div class="testimonios">
+    <h2>Todos los Testimonios Aprobados</h2>
+    <div class="testimonios-lista">
+        @foreach (var testimonio in Model.Testimonios)
+        {
+            <div class="testimonio-item">
+                <p><strong>@testimonio.Cliente</strong></p>
+                <p>"@testimonio.Testimonio"</p>
+                <p>
+                    Calificación:
+                    @for (int i = 1; i <= 5; i++)
+                    {
+                        <i class="fas fa-star @(i <= testimonio.Calificacion ? "text-warning" : "text-muted")"></i>
+                    }
+                </p>
+                <p><small>Fecha: @testimonio.FechaCreacion.ToString("dd/MM/yyyy")</small></p>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .testimonios {
+        padding: 30px;
+        background-color: #1a1a1a;
+        border-radius: 10px;
+        color: #fff;
+        margin-top: 20px;
+    }
+
+    .testimonios h2 {
+        text-align: center;
+        font-size: 28px;
+        color: #fff;
+        margin-bottom: 20px;
+    }
+
+    .testimonios-lista {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 15px;
+    }
+
+    .testimonio-item {
+        padding: 15px;
+        background-color: #2a2a2a;
+        border: 1px solid #444;
+        border-radius: 10px;
+    }
+
+    .testimonio-item p {
+        margin: 5px 0;
+    }
+
+    .text-warning {
+        color: #ffc107;
+    }
+
+    .text-muted {
+        color: #6c757d;
+    }
+</style>

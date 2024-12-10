@@ -1,0 +1,282 @@
+/* ========== CONFIGURACIÓN GLOBAL ========== */
+
+/* Configuración base */
+html {
+    font-size: 14px;
+    position: relative;
+    min-height: 100%;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+/* Estilo general del cuerpo */
+body {
+    margin-bottom: 60px;
+    background-color: #000000; /* Fondo completamente negro */
+    color: #ffffff; /* Texto blanco */
+    font-family: Arial, sans-serif;
+}
+
+/* Botones */
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+/* Enlaces del pie de página */
+footer a {
+    color: #ffffff; /* Enlaces en blanco */
+    text-decoration: none;
+}
+
+    footer a:hover {
+        text-decoration: underline; /* Subrayado al pasar el cursor */
+        color: #258cfb; /* Azul claro al pasar el cursor */
+    }
+
+/* ========== FORMULARIOS ========== */
+
+/* Estilo general de etiquetas */
+label, .form-label {
+    display: block;
+    font-weight: bold;
+    font-size: 1rem;
+    color: #ffffff; /* Texto blanco */
+    margin-bottom: 0.5rem;
+}
+
+/* Campos de formulario */
+.form-control, .form-select, textarea {
+    color: #ffffff; /* Texto blanco */
+    background-color: #1a1a1a; /* Fondo oscuro */
+    border: 1px solid #333; /* Borde oscuro */
+    border-radius: 4px;
+    padding: 0.5rem;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+
+/* Checkbox */
+.form-check-label {
+    color: #ffffff; /* Texto blanco */
+    margin-left: 0.5rem;
+}
+
+/* ========== TARJETAS Y DISEÑO ========== */
+
+/* Contenedor principal */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Encabezado */
+.header h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+/* Cuadrícula de artistas */
+.artistas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+/* Tarjeta de artista */
+.artista-card {
+    border: 1px solid #444; /* Borde oscuro */
+    border-radius: 8px;
+    overflow: hidden;
+    text-align: center;
+    background-color: #111; /* Fondo oscuro */
+    color: #ffffff; /* Texto blanco */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Sombra inicial */
+}
+
+    .artista-card:hover {
+        transform: scale(1.05); /* Escala ligera al pasar el cursor */
+        box-shadow: 0 10px 20px rgba(255, 255, 255, 0.3); /* Sombra más fuerte */
+    }
+
+/* Imagen dentro de la tarjeta */
+.artista-imagen {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-bottom: 1px solid #444; /* Separador */
+    transition: transform 0.3s ease-in-out;
+}
+
+.artista-card:hover .artista-imagen {
+    transform: scale(1.1); /* Zoom en la imagen */
+}
+
+/* Información de artista */
+.artista-info {
+    padding: 15px;
+}
+
+    .artista-info h2 {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+        font-weight: bold;
+        color: #ffffff;
+    }
+
+/* Botón de ver perfil */
+.btn-ver-perfil {
+    display: inline-block;
+    padding: 10px 15px;
+    color: #ffffff;
+    background-color: #007BFF;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+    .btn-ver-perfil:hover {
+        background-color: #0056b3;
+    }
+
+/* ========== TARJETAS DE MEMBRESÍA ========== */
+
+/* Tarjetas con animación */
+.membership-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #444;
+    background-color: #111;
+    color: #ffffff;
+    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+    .membership-card:hover {
+        transform: scale(1.05) rotate(1deg); /* Escala y rotación */
+        box-shadow: 0 10px 20px rgba(255, 255, 255, 0.3);
+    }
+
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+    border-bottom: 1px solid #444;
+    transition: transform 0.3s ease-in-out;
+}
+
+.membership-card:hover .card-img-top {
+    transform: scale(1.1);
+}
+
+/* Títulos de tarjeta */
+.card-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+/* ========== PERSONALIZACIONES ========== */
+
+/* Texto personalizado */
+.custom-text-color {
+    color: #00ff00; /* Verde */
+    font-weight: bold;
+}
+
+
+/* Estilo para el navbar */
+.navbar {
+    background-color: #000000; /* Fondo negro */
+    color: #ffffff; /* Texto blanco */
+    border-bottom: 1px solid #444; /* Línea de separación sutil */
+    padding: 10px 20px; /* Espaciado interno */
+    position: sticky; /* Fija la barra de navegación en la parte superior */
+    top: 0;
+    z-index: 1000; /* Asegura que se muestre sobre otros elementos */
+}
+
+    /* Estilo para los enlaces en el navbar */
+    .navbar a {
+        color: #ffffff; /* Texto blanco */
+        text-decoration: none; /* Sin subrayado */
+        margin: 0 15px; /* Separación entre enlaces */
+        font-weight: bold; /* Texto en negrita */
+        transition: color 0.3s ease; /* Transición suave al pasar el cursor */
+    }
+
+        /* Cambia el color del texto al pasar el cursor */
+        .navbar a:hover {
+            color: #258cfb; /* Color azul al pasar el cursor */
+            text-decoration: underline; /* Subrayado al pasar el cursor */
+        }
+
+    /* Logo en el navbar */
+    .navbar .navbar-logo {
+        font-size: 1.5rem; /* Tamaño más grande para el logo */
+        font-weight: bold; /* Negrita */
+        color: #ffffff; /* Color blanco */
+        margin-right: auto; /* Alinea el logo a la izquierda */
+    }
+
+    /* Botones en el navbar */
+    .navbar .btn {
+        color: #ffffff; /* Texto blanco */
+        background-color: #007BFF; /* Fondo azul */
+        border: none; /* Sin borde */
+        padding: 8px 15px; /* Espaciado interno */
+        border-radius: 4px; /* Bordes redondeados */
+        transition: background-color 0.3s ease; /* Transición suave */
+    }
+
+        .navbar .btn:hover {
+            background-color: #0056b3; /* Azul más oscuro al pasar el cursor */
+        }
+
+
+.artista-card {
+    cursor: pointer;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    text-align: center;
+    background-color: #111;
+    color: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+}
+
+    .artista-card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
+    }
+
+.perfil-container {
+    max-width: 900px;
+    margin: auto;
+    color: white;
+}
+
+.perfil-header {
+    text-align: center;
+}
+
+.perfil-imagen {
+    border-radius: 50%;
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+}
+
+.tags .tag {
+    background-color: #444;
+    padding: 5px 10px;
+    border-radius: 4px;
+    margin-right: 5px;
+    display: inline-block;
+}

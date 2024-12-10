@@ -1,0 +1,59 @@
+﻿@page
+@model Jefatura.Pages.Aprobacion.ArtistaApbModel
+@{
+    ViewData["Title"] = "Gestión de Estado de Artistas";
+}
+
+<div class="container my-4">
+    <h2 class="text-center">Gestión de Estado de Artistas</h2>
+
+    @if (!string.IsNullOrEmpty(Model.Mensaje))
+    {
+        <div class="alert alert-info">@Model.Mensaje</div>
+    }
+
+    <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Apellidos</th>
+                <th>Teléfono</th>
+                <th>Correo</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.ListaArtistas != null && Model.ListaArtistas.Any())
+            {
+                @foreach (var artista in Model.ListaArtistas)
+                {
+                    <tr>
+                        <td>@artista.IdArtista</td>
+                        <td>@artista.Nombre</td>
+                        <td>@artista.Apellidos</td>
+                        <td>@artista.Telefono</td>
+                        <td>@artista.Correo</td>
+                        <td>@(artista.Estado ? "Activo" : "Inactivo")</td>
+                        <td>
+                            <form method="post" asp-page-handler="CambiarEstado" class="d-inline">
+                                <input type="hidden" name="idArtista" value="@artista.IdArtista" />
+                                <input type="hidden" name="nuevoEstado" value="@(artista.Estado ? "false" : "true")" />
+                                <button type="submit" class="btn @(artista.Estado ? "btn-danger" : "btn-success") btn-sm">
+                                    @(artista.Estado ? "Desactivar" : "Activar")
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="7" class="text-center">No hay artistas registrados.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

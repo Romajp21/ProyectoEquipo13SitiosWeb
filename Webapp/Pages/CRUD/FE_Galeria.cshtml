@@ -1,0 +1,175 @@
+﻿@page "{id:int?}"
+@model Artistas.Pages.CRUD.FE_GaleriaModel
+@{
+    ViewData["Title"] = "Gestión de Galerías"; // Título de la página
+}
+
+<div class="container mt-4">
+    <!-- Cabecera -->
+    <div class="row">
+        <div class="col-12 text-center mb-4">
+            <h1 class="text-primary fw-bold">🎨 Gestión de Galerías</h1> <!-- Título de la sección -->
+        </div>
+    </div>
+
+    <!-- Botón para abrir el modal -->
+    <div class="row mb-3">
+        <div class="col-12 text-end">
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalGaleria">
+                <i class="fas fa-plus"></i> Agregar Nueva Imagen <!-- Botón para agregar una nueva imagen -->
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal para registrar o actualizar imágenes -->
+    <div class="modal fade" id="modalGaleria" tabindex="-1" aria-labelledby="modalGaleriaLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="modalGaleriaLabel">
+                        @(Model.NuevaGaleria.IdImagen > 0 ? "Actualizar Imagen" : "Registrar Imagen") <!-- Determina el título del modal -->
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" enctype="multipart/form-data">
+                        <!-- ID oculto para el formulario -->
+                        <input type="hidden" name="NuevaGaleria.IdImagen" value="@Model.NuevaGaleria.IdImagen" />
+
+                        <!-- Campo para ID del artista -->
+                        <div class="mb-3">
+                            <label for="IdArtista" class="form-label">ID del Artista</label>
+                            <input type="number" class="form-control" id="IdArtista" name="NuevaGaleria.IdArtista" value="@Model.NuevaGaleria.IdArtista" required />
+                        </div>
+
+                        <!-- Campo para descripción del tatuaje -->
+                        <div class="mb-3">
+                            <label for="DescripcionTatuaje" class="form-label">Descripción del Tatuaje</label>
+                            <input type="text" class="form-control" id="DescripcionTatuaje" name="NuevaGaleria.DescripcionTatuaje" value="@Model.NuevaGaleria.DescripcionTatuaje" required />
+                        </div>
+
+                        <!-- Campo para subir o reemplazar una imagen -->
+                      @*   <div class="mb-3">
+                            <label for="ArchivoImagen" class="form-label">Subir/Reemplazar Imagen</label>
+                            @if (!string.IsNullOrEmpty(Model.NuevaGaleria.RutaImagen))
+                            {
+                                <div class="mb-2 text-center">
+                                    <img src="@Model.NuevaGaleria.RutaImagen" alt="Vista Previa" class="img-thumbnail shadow-sm" style="max-width: 200px;" />
+                                </div>
+                            }
+                            <input type="file" class="form-control" id="ArchivoImagen" name="ArchivoImagen" accept="image/*" />
+                        </div> *@
+                        <div class="mb-3">
+                            <label for="ArchivoImagen" class="form-label">Subir/Reemplazar Imagen</label>
+                            @if (!string.IsNullOrEmpty(Model.NuevaGaleria.RutaImagen))
+                            {
+                                <div class="mb-2 text-center">
+                                    <img src="@Model.NuevaGaleria.RutaImagen" alt="Vista Previa"
+                                         class="img-thumbnail shadow-sm" style="max-width: 200px;" />
+                                </div>
+                            }
+                            <input type="file" class="form-control" id="ArchivoImagen" name="ArchivoImagen" accept="image/*" />
+                        </div>
+                        <!-- Campo para el estado de la imagen -->
+                        <div class="mb-3">
+                            <label for="Estado" class="form-label">Estado</label>
+                            <select class="form-control" id="Estado" name="NuevaGaleria.Estado">
+                                <option value="true" selected="@(Model.NuevaGaleria.Estado)">Activo</option>
+                                <option value="false" selected="@(Model.NuevaGaleria.Estado == false)">Inactivo</option>
+                            </select>
+                        </div>
+
+                        <!-- Botones de acción -->
+                        <div class="d-flex justify-content-between">
+                            <button type="submit" class="btn btn-success w-50">
+                                @(Model.NuevaGaleria.IdImagen > 0 ? "Guardar Cambios" : "Registrar") <!-- Determina si se guarda o registra -->
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary w-50" data-bs-dismiss="modal">Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla para mostrar imágenes registradas -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-lg">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0">Imágenes Registradas</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.ListaGalerias.Count > 0)
+                    {
+                        <table class="table table-hover table-bordered align-middle text-center">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>ID Artista</th>
+                                    <th>Descripción</th>
+                                    <th>Vista Previa</th>
+                                    <th>Estado</th>
+                                    <th>Fecha</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var galeria in Model.ListaGalerias)
+                                {
+                                    <tr>
+                                        <td>@galeria.IdImagen</td> <!-- ID de la imagen -->
+                                        <td>@galeria.IdArtista</td> <!-- ID del artista -->
+                                        <td>@galeria.DescripcionTatuaje</td> <!-- Descripción del tatuaje -->
+                                        <td>
+                                            @* <img src="@galeria.RutaImagen" alt="Vista Previa" class="img-thumbnail" style="max-width: 100px;" /> <!-- Vista previa --> *@
+                                            @if (!string.IsNullOrEmpty(galeria.RutaImagen) && galeria.RutaImagen.StartsWith("data:image/"))
+                                            {
+                                                <img src="@galeria.RutaImagen" alt="Vista Previa" class="img-thumbnail" style="max-width: 100px;" />
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">Vista Previa No Disponible</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <span class="badge @(galeria.Estado ? "bg-success" : "bg-danger")">@((galeria.Estado) ? "Activo" : "Inactivo")</span> <!-- Estado -->
+                                        </td>
+                                        <td>@galeria.Fecha.ToString("dd/MM/yyyy")</td> <!-- Fecha de registro -->
+                                        <td>
+                                            <!-- Botón para actualizar -->
+                                            <a asp-page="./FE_Galeria" asp-route-id="@galeria.IdImagen" class="btn btn-warning btn-sm">Actualizar</a>
+                                            <!-- Botón para eliminar -->
+                                            <form method="post" asp-page-handler="Eliminar" asp-route-id="@galeria.IdImagen" class="d-inline">
+                                                <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning text-center">No hay imágenes registradas.</div> <!-- Mensaje cuando no hay imágenes -->
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Script para manejar el modal -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Mostrar el modal automáticamente si estamos actualizando
+    @if (Model.NuevaGaleria.IdImagen > 0)
+    {
+        <text>
+                    const modalGaleria = new bootstrap.Modal(document.getElementById('modalGaleria'));
+                    modalGaleria.show();
+        </text>
+    }
+            });
+</script>
+

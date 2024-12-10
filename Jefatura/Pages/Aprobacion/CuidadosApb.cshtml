@@ -1,0 +1,115 @@
+﻿@page
+@model Jefatura.Pages.Aprobacion.CuidadosApbModel
+@{
+    ViewData["Title"] = "Gestión de Cuidados por Jefatura";
+}
+
+<div class="container my-4">
+    <h2 class="text-center">Gestión de Cuidados del Tatuaje</h2>
+
+    @if (TempData["Mensaje"] != null)
+    {
+        <div class="alert alert-success">@TempData["Mensaje"]</div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+
+    <!-- Tabla de Cuidados -->
+    <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Descripción</th>
+                <th>Estado</th>
+                <th>Imagen</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var cuidado in Model.ListaCuidados)
+            {
+                <tr>
+                    <td>@cuidado.IdCuidadosDelTatuaje</td>
+                    <td>@cuidado.DescripcionCuidadosDelTatuaje</td>
+                    <td>@(cuidado.Estado ? "Activo" : "Inactivo")</td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(cuidado.Imagen))
+                        {
+                            <img src="@cuidado.Imagen" alt="Imagen del Cuidado" width="100" />
+                        }
+                        else
+                        {
+                            <span>Sin Imagen</span>
+                        }
+                    </td>
+                    <td>
+                        <!-- Botón para Editar -->
+                        <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editarModal"
+                                data-id="@cuidado.IdCuidadosDelTatuaje"
+                                data-descripcion="@cuidado.DescripcionCuidadosDelTatuaje"
+                                data-estado="@cuidado.Estado">
+                            Editar
+                        </button>
+
+                        <!-- Formulario para Eliminar -->
+                        <form method="post" asp-page-handler="Eliminar" class="d-inline">
+                            <input type="hidden" name="IdCuidadoEliminar" value="@cuidado.IdCuidadosDelTatuaje" />
+                            <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal para Editar -->
+<div class="modal fade" id="editarModal" tabindex="-1" aria-labelledby="editarModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" asp-page-handler="EditarJefatura">
+                <div class="modal-header">
+                    <h5 class="modal-title">Editar Cuidado</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="editarId" name="CuidadoEditar.IdCuidadosDelTatuaje" />
+                    <div class="mb-3">
+                        <label for="editarDescripcion" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="editarDescripcion" name="CuidadoEditar.DescripcionCuidadosDelTatuaje" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editarEstado" class="form-label">Estado</label>
+                        <select class="form-select" id="editarEstado" name="CuidadoEditar.Estado">
+                            <option value="true">Activo</option>
+                            <option value="false">Inactivo</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const editarModal = document.getElementById('editarModal');
+        editarModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+
+            const id = button.getAttribute('data-id');
+            const descripcion = button.getAttribute('data-descripcion');
+            const estado = button.getAttribute('data-estado') === "True";
+
+            document.getElementById('editarId').value = id;
+            document.getElementById('editarDescripcion').value = descripcion || '';
+            document.getElementById('editarEstado').value = estado;
+        });
+    });
+</script>

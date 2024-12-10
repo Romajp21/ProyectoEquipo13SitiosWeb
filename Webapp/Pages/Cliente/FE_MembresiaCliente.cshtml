@@ -1,0 +1,124 @@
+﻿@page
+@model Webapp.Pages.Cliente.FE_MembresiaClienteModel
+@{
+    ViewData["Title"] = "Membresías";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #000; /* Fondo negro */
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #fff; /* Texto blanco por defecto */
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .title {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #fff; /* Título en blanco */
+        }
+
+        .cards {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .card {
+            background-color: #fff; /* Fondo blanco para las tarjetas */
+            color: #333; /* Texto oscuro dentro de las tarjetas */
+            border-radius: 15px;
+            padding: 20px;
+            width: 300px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+            .card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 12px rgba(255, 255, 255, 0.2);
+            }
+
+            .card h2 {
+                font-size: 24px;
+                font-weight: 700;
+                margin-bottom: 10px;
+            }
+
+            .card .price {
+                font-size: 32px;
+                font-weight: 500;
+                margin: 10px 0;
+                color: #007bff; /* Color azul para el precio */
+            }
+
+            .card ul {
+                list-style: none;
+                padding: 0;
+                margin: 20px 0;
+                text-align: left;
+            }
+
+                .card ul li {
+                    margin-bottom: 10px;
+                    font-size: 16px;
+                }
+
+            .card button {
+                background-color: #007bff; /* Botón azul */
+                color: #fff;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 50px;
+                cursor: pointer;
+                font-size: 16px;
+                transition: background-color 0.3s;
+            }
+
+                .card button:hover {
+                    background-color: #0056b3; /* Azul más oscuro en hover */
+                }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title">Membresías</div>
+        <div class="cards">
+            @foreach (var membresia in Model.Membresias)
+            {
+                <div class="card">
+                    <h2>@membresia.Nombre</h2>
+                    <div class="price">$@membresia.Precio<span>/mo</span></div>
+                    <ul>
+                        @foreach (var beneficio in membresia.Beneficios)
+                        {
+                            <li>• @beneficio</li>
+                        }
+                    </ul>
+                    <form method="get" asp-page="/Cliente/FE_AdquirirMembresia">
+                        <input type="hidden" name="IdMembresia" value="@membresia.IdMembresia" />
+                        <button type="submit">Adquirir Membresía</button>
+                    </form>
+                </div>
+            }
+        </div>
+    </div>
+</body>
+</html>

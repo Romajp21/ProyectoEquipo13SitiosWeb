@@ -1,0 +1,73 @@
+﻿@page
+@model AsistenteAdministrativo.Pages.Productos.Membresias
+@{
+    ViewData["Title"] = "Membresia";
+}
+
+<div class="text-center mb-5">
+    <h1 class="display-4 text-white">Membresías</h1>
+    <p class="text-muted">Bienvenido a InkView</p>
+    <p class="text-muted">Únete a nuestra comunidad de entusiastas del tatuaje, artistas y estudios. Disfruta de acceso exclusivo a eventos, descuentos en productos y más.</p>
+</div>
+
+<div class="row justify-content-center">
+    <!-- Membresía Básica -->
+    <div class="col-md-4 mb-4">
+        <div class="card membership-card">
+            <img src="~/images/basic.jpg" class="card-img-top" alt="Membresía Básica">
+            <div class="card-body text-center">
+                <h3 class="card-title">Membresía Básica</h3>
+                <p class="card-text display-5">$0</p>
+                <form method="post" asp-page-handler="Facturacion">
+                    <input type="hidden" name="IdMembresia" value="1" />
+                    <button type="submit" class="btn btn-primary">Adquirir</button>
+                </form>
+                <ul class="list-unstyled mt-3">
+                    <li>5% de descuento en todos los tatuajes</li>
+                    <li>Consulta inicial gratuita para ideas de diseño</li>
+                    <li>Renovación mensual automática</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Membresía VIP -->
+    <div class="col-md-4 mb-4">
+        <div class="card membership-card">
+            <img src="~/images/vip.jpg" class="card-img-top" alt="Membresía VIP">
+            <div class="card-body text-center">
+                <h3 class="card-title">Membresía VIP</h3>
+                <p class="card-text display-5">$20</p>
+                <form method="post" asp-page-handler="Adquirir">
+                    <input type="hidden" name="IdMembresia" value="2" />
+                    <button type="submit" class="btn btn-primary">Adquirir</button>
+                </form>
+                <ul class="list-unstyled mt-3">
+                    <li>15-20% de descuento en tatuajes</li>
+                    <li>Consultas ilimitadas con artistas</li>
+                    <li>Renovación anual con beneficios exclusivos</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Membresía Premium -->
+    <div class="col-md-4 mb-4">
+        <div class="card membership-card">
+            <img src="~/images/premium.jpg" class="card-img-top" alt="Membresía Premium">
+            <div class="card-body text-center">
+                <h3 class="card-title">Membresía Premium</h3>
+                <p class="card-text display-5">$50</p>
+                <form method="post" asp-page-handler="/Productos/Facturacion">
+                    <input type="hidden" name="IdMembresia" value="3" />
+                    <button type="submit" class="btn btn-primary">Adquirir</button>
+                </form>
+                <ul class="list-unstyled mt-3">
+                    <li>20% de descuento en todos los tatuajes</li>
+                    <li>Dos consultas personalizadas al año</li>
+                    <li>Acceso a eventos exclusivos</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

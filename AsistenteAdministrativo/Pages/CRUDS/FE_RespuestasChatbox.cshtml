@@ -1,0 +1,159 @@
+﻿@page
+@model AsistenteAdministrativo.Pages.CRUDS.FE_RespuestasChatboxModel
+@{
+    ViewData["Title"] = "Gestión de Respuestas del Chatbox";
+}
+
+<h2>Gestión de Respuestas del Chatbox</h2>
+
+@if (!string.IsNullOrEmpty(Model.Mensaje))
+{
+    <div class="alert alert-info">
+        @Model.Mensaje
+    </div>
+}
+
+<!-- Botón para abrir el modal -->
+<button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#modalFormulario" onclick="limpiarFormulario()">
+    Crear Respuesta
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="modalFormulario" tabindex="-1" aria-labelledby="modalFormularioLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalFormularioLabel">Gestión de Respuestas</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Formulario dentro del modal -->
+                <form method="post" asp-page-handler="GuardarRespuesta">
+                    <input type="hidden" name="RespuestaActual.IdRespuesta" value="@Model.RespuestaActual.IdRespuesta" />
+                    <div class="form-group mb-3">
+                        <label for="IdPregunta">Selecciona la Pregunta</label>
+                        <select id="IdPregunta" name="RespuestaActual.IdPregunta" class="form-control" required>
+                            <option value="" disabled>-- Selecciona una pregunta --</option>
+                            @foreach (var pregunta in Model.Preguntas)
+                            {
+                                @if (Model.RespuestaActual.IdPregunta == pregunta.IdPregunta)
+                                {
+                                    <option value="@pregunta.IdPregunta" selected="selected">@pregunta.TextoPregunta</option>
+                                }
+                                else
+                                {
+                                    <option value="@pregunta.IdPregunta">@pregunta.TextoPregunta</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="TextoRespuesta">Texto de la Respuesta</label>
+                        <input type="text" id="TextoRespuesta" name="RespuestaActual.TextoRespuesta" value="@Model.RespuestaActual.TextoRespuesta" class="form-control" required />
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="Orden">Orden</label>
+                        <input type="number" id="Orden" name="RespuestaActual.Orden" value="@Model.RespuestaActual.Orden" class="form-control" required />
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="IdPreguntaDestino">Selecciona la Pregunta Destino (Opcional)</label>
+                        <select id="IdPreguntaDestino" name="RespuestaActual.IdPreguntaDestino" class="form-control">
+                            <option value="">-- Sin destino --</option>
+                            @foreach (var pregunta in Model.Preguntas)
+                            {
+                                @if (Model.RespuestaActual.IdPreguntaDestino == pregunta.IdPregunta)
+                                {
+                                    <option value="@pregunta.IdPregunta" selected="selected">@pregunta.TextoPregunta</option>
+                                }
+                                else
+                                {
+                                    <option value="@pregunta.IdPregunta">@pregunta.TextoPregunta</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="Estado">Estado</label>
+                        <select id="Estado" name="RespuestaActual.Estado" class="form-control">
+                            @if (Model.RespuestaActual.Estado)
+                            {
+                                <option value="true" selected="selected">Activa</option>
+                                <option value="false">Inactiva</option>
+                            }
+                            else
+                            {
+                                <option value="true">Activa</option>
+                                <option value="false" selected="selected">Inactiva</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr />
+
+<!-- Tabla de respuestas -->
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Pregunta</th>
+            <th>Respuesta</th>
+            <th>Destino</th>
+            <th>Orden</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var respuesta in Model.Respuestas)
+        {
+            <tr>
+                <td>@respuesta.TextoPregunta</td>
+                <td>@respuesta.TextoRespuesta</td>
+                <td>@(respuesta.IdPreguntaDestino.HasValue ? Model.Preguntas.FirstOrDefault(p => p.IdPregunta == respuesta.IdPreguntaDestino)?.TextoPregunta : "N/A")</td>
+                <td>@respuesta.Orden</td>
+                <td>@(respuesta.Estado ? "Activa" : "Inactiva")</td>
+                <td>
+                    <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#modalFormulario" onclick="cargarDatos(@respuesta.IdRespuesta)">
+                        Editar
+                    </button>
+                    <form method="post" asp-page-handler="EliminarRespuesta" style="display:inline;">
+                        <input type="hidden" name="idRespuesta" value="@respuesta.IdRespuesta" />
+                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de eliminar esta respuesta?');">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script>
+    function cargarDatos(idRespuesta) {
+        const respuesta = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Respuestas));
+        const datos = respuesta.find(r => r.IdRespuesta === idRespuesta);
+        if (!datos) return;
+
+        document.querySelector('[name="RespuestaActual.IdRespuesta"]').value = datos.IdRespuesta;
+        document.querySelector('[name="RespuestaActual.TextoRespuesta"]').value = datos.TextoRespuesta;
+        document.querySelector('[name="RespuestaActual.IdPregunta"]').value = datos.IdPregunta;
+        document.querySelector('[name="RespuestaActual.IdPreguntaDestino"]').value = datos.IdPreguntaDestino ?? '';
+        document.querySelector('[name="RespuestaActual.Orden"]').value = datos.Orden;
+        document.querySelector('[name="RespuestaActual.Estado"]').value = datos.Estado ? 'true' : 'false';
+    }
+
+    function limpiarFormulario() {
+        document.querySelector('[name="RespuestaActual.IdRespuesta"]').value = 0; // Cambiar de '' a 0
+        document.querySelector('[name="RespuestaActual.TextoRespuesta"]').value = '';
+        document.querySelector('[name="RespuestaActual.IdPregunta"]').value = '';
+        document.querySelector('[name="RespuestaActual.IdPreguntaDestino"]').value = '';
+        document.querySelector('[name="RespuestaActual.Orden"]').value = 1; // Default a 1
+        document.querySelector('[name="RespuestaActual.Estado"]').value = 'true';
+    }
+</script>

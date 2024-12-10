@@ -1,0 +1,65 @@
+﻿@page
+@model Webapp.Pages.Cliente.FE_AdquirirMembresiaModel
+@{
+    ViewData["Title"] = "Adquirir Membresía";
+}
+
+<div class="container">
+    <!-- Mostrar mensajes de éxito o error -->
+    @if (TempData["Mensaje"] != null)
+    {
+        <div class="alert alert-success">@TempData["Mensaje"]</div>
+        <script>
+            // Redirigir a la página principal después de 5 segundos
+            setTimeout(() => {
+                window.location.href = "/";
+            }, 5000);
+        </script>
+    }
+    else
+    {
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger">@TempData["Error"]</div>
+        }
+
+        <!-- Evitar errores si Membresia es null -->
+        @if (Model.Membresia == null)
+        {
+            <div class="alert alert-danger">No se pudo cargar la información de la membresía seleccionada.</div>
+        }
+        else
+        {
+            <!-- Información de la membresía -->
+            <h2>@Model.Membresia.NombreMembresia</h2>
+            <p><strong>Precio:</strong> @Model.Membresia.Precio.ToString("C")</p>
+            <p><strong>Duración:</strong> @Model.Membresia.Duracion Mes(es)</p>
+
+            <h4>Beneficios:</h4>
+            <ul>
+                @foreach (var contenido in Model.Membresia.Contenidos)
+                {
+                    <li>@contenido.NombreContenido</li>
+                }
+            </ul>
+
+            <!-- Información de pago -->
+            <h4>Información de Pago</h4>
+            <form method="post">
+                <input type="hidden" name="idMembresia" value="@Model.Membresia.IdMembresia" />
+
+                <div class="form-group">
+                    <label for="monto">Monto:</label>
+                    <input type="text" id="monto" name="monto" value="@Model.Membresia.Precio" class="form-control" readonly />
+                </div>
+
+                <div class="form-group">
+                    <label for="numeroTarjeta">Número de Tarjeta:</label>
+                    <input type="text" id="numeroTarjeta" name="numeroTarjeta" class="form-control" placeholder="Ingrese el número de tarjeta" required />
+                </div>
+
+                <button type="submit" class="btn btn-primary">Confirmar Adquisición</button>
+            </form>
+        }
+    }
+</div>

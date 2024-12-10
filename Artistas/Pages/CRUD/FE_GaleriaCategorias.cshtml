@@ -1,0 +1,135 @@
+﻿@page "{idImagen:int?}/{idCategoria:int?}"
+@model Artistas.Pages.CRUD.FE_GaleriaCategoriasModel
+@{
+    ViewData["Title"] = "Gestión de Categorías en la Galería";
+}
+
+<h2>Gestión de Categorías en la Galería</h2>
+
+@if (!string.IsNullOrEmpty(Model.Mensaje))
+{
+    <div class="alert alert-info" role="alert">
+        @Model.Mensaje
+    </div>
+}
+
+<div class="card">
+    <div class="card-header">
+        <h4>@(Model.GaleriaCategoriaForm.IdImagen > 0 ? "Actualizar Relación" : "Nueva Relación")</h4>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            <!-- Dropdown para seleccionar la imagen -->
+            <div class="form-group">
+                <label for="IdImagen">Imagen</label>
+                <select id="IdImagen" name="GaleriaCategoriaForm.IdImagen" class="form-control" required onchange="mostrarVistaPrevia()">
+                    <option value="">Seleccione una imagen</option>
+                    @Html.Raw(Model.RenderDropdownImagenes())
+                </select>
+            </div>
+
+            <!-- Vista previa de la imagen seleccionada -->
+            <div id="vistaPreviaImagen" class="mt-3">
+                @if (Model.GaleriaCategoriaForm.IdImagen > 0)
+                {
+                    var imagenSeleccionada = Model.ListaGaleria.FirstOrDefault(g => g.IdImagen == Model.GaleriaCategoriaForm.IdImagen);
+                    if (imagenSeleccionada != null)
+                    {
+                        <img src="@imagenSeleccionada.RutaImagen" alt="Vista Previa" style="max-width: 200px; margin-top: 10px;" />
+                    }
+                }
+            </div>
+
+            <!-- Dropdown para seleccionar la categoría -->
+            <div class="form-group">
+                <label for="IdCategoriaTatuajes">Categoría de Tatuaje</label>
+                <select id="IdCategoriaTatuajes" name="GaleriaCategoriaForm.IdCategoriaTatuajes" class="form-control" required>
+                    <option value="">Seleccione una categoría</option>
+                    @Html.Raw(Model.RenderDropdownCategorias())
+                </select>
+            </div>
+
+            <!-- Dropdown para seleccionar el estado -->
+            <div class="form-group">
+                <label for="Estado">Estado</label>
+                <select id="Estado" name="GaleriaCategoriaForm.Estado" class="form-control">
+                    @Html.Raw(Model.RenderDropdownEstado())
+                </select>
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="form-group">
+                <button type="submit" asp-page-handler="@(Model.GaleriaCategoriaForm.IdImagen > 0 ? "Actualizar" : "Guardar")"
+                        class="btn btn-success">
+                    @(Model.GaleriaCategoriaForm.IdImagen > 0 ? "Actualizar" : "Guardar")
+                </button>
+                <a asp-page="./FE_GaleriaCategorias" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<hr />
+
+<!-- Tabla de relaciones existentes -->
+<h3>Relaciones Existentes</h3>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID Imagen</th>
+            <th>Imagen</th>
+            <th>Categoría</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var relacion in Model.GaleriaCategorias)
+        {
+            <tr>
+                <td>@relacion.IdImagen</td>
+                <td>
+                    <p>@relacion.DescripcionTatuaje</p>
+                    <img src="@relacion.RutaImagen" alt="Vista Previa" style="max-width: 100px;" />
+                </td>
+                <td>@Model.ListaCategorias.FirstOrDefault(c => c.IdCategoriaTatuajes == relacion.IdCategoriaTatuajes)?.NombreCategoria</td>
+                <td>@(relacion.Estado ? "Activo" : "Inactivo")</td>
+                <td>
+                    <a asp-page="./FE_GaleriaCategorias"
+                       asp-route-idImagen="@relacion.IdImagen"
+                       asp-route-idCategoria="@relacion.IdCategoriaTatuajes"
+                       class="btn btn-warning btn-sm">Editar</a>
+                    <form method="post" style="display:inline;">
+                        <input type="hidden" name="GaleriaCategoriaForm.IdImagen" value="@relacion.IdImagen" />
+                        <input type="hidden" name="GaleriaCategoriaForm.IdCategoriaTatuajes" value="@relacion.IdCategoriaTatuajes" />
+                        <button type="submit" asp-page-handler="Eliminar" class="btn btn-danger btn-sm">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script>
+    // Función para mostrar la vista previa de la imagen seleccionada
+    function mostrarVistaPrevia() {
+        const selectImagen = document.getElementById("IdImagen");
+        const vistaPreviaDiv = document.getElementById("vistaPreviaImagen");
+
+        // Obtener el valor seleccionado
+        const idImagenSeleccionada = selectImagen.value;
+
+        // Lista de imágenes como un arreglo de objetos desde el backend
+        const listaImagenes = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.ListaGaleria));
+
+        // Buscar la imagen correspondiente en la lista
+        const imagen = listaImagenes.find(img => img.IdImagen == idImagenSeleccionada);
+
+        // Actualizar la vista previa
+        if (imagen) {
+            vistaPreviaDiv.innerHTML = `<img src="${imagen.RutaImagen}" alt="Vista Previa" style="max-width: 200px; margin-top: 10px;" />`;
+        } else {
+            vistaPreviaDiv.innerHTML = ""; // Limpiar la vista previa si no hay selección
+        }
+    }
+</script>

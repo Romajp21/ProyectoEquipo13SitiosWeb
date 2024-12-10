@@ -1,0 +1,116 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Ink Studio</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Webapp.styles.css" asp-append-version="true" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+    <style>
+        /* Configuración para el layout */
+        html, body {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+        }
+
+        footer {
+            background-color: #212529;
+            color: #fff;
+            padding: 10px 0;
+            text-align: center;
+            position: sticky;
+            bottom: 0;
+            width: 100%;
+        }
+
+            footer a {
+                color: #fff;
+                text-decoration: none;
+            }
+
+                footer a:hover {
+                    text-decoration: underline;
+                }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand fw-bold" asp-area="" asp-page="/Index">Ink Studio</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link text-light" asp-area="" asp-page="/Cliente/FE_Home">Inicio</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light" asp-area="" asp-page="/Cliente/FE_TableroCliente">Tablero Informativo</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light" asp-area="" asp-page="/Cliente/FE_Citas">Citas</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light" asp-area="" asp-page="/Cliente/FE_MembresiaCliente">Membresías</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light" asp-area="" asp-page="/Cliente/FE_Testimonio">Testimonio</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light" asp-area="" asp-page="/FAQ">Preguntas Frecuentes</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light" asp-area="" asp-page="/Contacto">Contacto</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link text-light" asp-area="" asp-page="/Cliente/CuidadoTatuajes">CuidadoTatuajes</a>
+                        </li>
+
+
+                        <!--Punto de Venta -->
+                        <li class="nav-item">
+                            <a class="nav-link text-light" asp-area="" asp-page="/Productos/Productos">Ventas</a>
+                        </li>
+                 
+                 
+
+                        <li class="nav-item">
+                            <a class="nav-link  text-light" asp-page="/Artista/IndexArtista">Artistas</a>
+                        </li>
+
+                       
+
+                    </ul>
+                    <div class="d-flex">
+                        <button class="btn btn-outline-light me-2">Iniciar Sesión</button>
+                        <button class="btn btn-light">Registrarse</button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="content container my-4">
+        <main role="main">
+            @RenderBody()
+        </main>
+    </div>
+    <footer>
+        &copy; 2024 - Ink Studio - <a asp-area="" asp-page="/Privacy">Privacidad</a>
+    </footer>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

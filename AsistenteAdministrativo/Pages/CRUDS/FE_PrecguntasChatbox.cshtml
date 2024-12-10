@@ -1,0 +1,113 @@
+﻿@page
+@model AsistenteAdministrativo.Pages.CRUDS.FE_PreguntasChatboxModel
+@{
+    ViewData["Title"] = "Gestión de Preguntas del Chatbox";
+}
+
+<h2>Gestión de Preguntas del Chatbox</h2>
+
+<!-- Mensajes de estado -->
+@if (!string.IsNullOrEmpty(Model.Mensaje))
+{
+    <div class="alert alert-info">
+        @Model.Mensaje
+    </div>
+}
+
+<!-- Botón para abrir el modal -->
+<button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#modalFormulario" onclick="limpiarFormulario()">
+    Crear Pregunta
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="modalFormulario" tabindex="-1" aria-labelledby="modalFormularioLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalFormularioLabel">Gestión de Preguntas</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Formulario dentro del modal -->
+                <form method="post" asp-page-handler="GuardarPregunta">
+                    <div class="form-group mb-3">
+                        <label for="TextoPregunta">Texto de la Pregunta</label>
+                        <input type="hidden" id="IdPregunta" name="PreguntaActual.IdPregunta" value="@Model.PreguntaActual.IdPregunta" />
+                        <input type="text" id="TextoPregunta" name="PreguntaActual.TextoPregunta" value="@Model.PreguntaActual.TextoPregunta" class="form-control" required />
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="EstadoPregunta">Estado</label>
+                        <select id="EstadoPregunta" name="PreguntaActual.EstadoPregunta" class="form-control">
+                            @if (Model.PreguntaActual?.EstadoPregunta == true)
+                            {
+                                <option value="true" selected="selected">Activa</option>
+                                <option value="false">Inactiva</option>
+                            }
+                            else
+                            {
+                                <option value="true">Activa</option>
+                                <option value="false" selected="selected">Inactiva</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr />
+
+<!-- Listado de Preguntas -->
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Texto de la Pregunta</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var pregunta in Model.Preguntas)
+        {
+            <tr>
+                <td>@pregunta.TextoPregunta</td>
+                <td>@(pregunta.EstadoPregunta ? "Activa" : "Inactiva")</td>
+                <td>
+                    <!-- Botón para abrir modal y cargar datos -->
+                    <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#modalFormulario" onclick="cargarDatos(@pregunta.IdPregunta)">
+                        Editar
+                    </button>
+                    <form method="post" asp-page-handler="EliminarPregunta" style="display:inline;">
+                        <input type="hidden" name="IdPregunta" value="@pregunta.IdPregunta" />
+                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de eliminar esta pregunta?');">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script>
+    // Función para cargar datos al modal al editar
+    function cargarDatos(idPregunta) {
+        const preguntas = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Preguntas));
+        const datos = preguntas.find(p => p.IdPregunta === idPregunta);
+        if (!datos) return;
+
+        document.getElementById('IdPregunta').value = datos.IdPregunta;
+        document.getElementById('TextoPregunta').value = datos.TextoPregunta;
+        document.getElementById('EstadoPregunta').value = datos.EstadoPregunta ? 'true' : 'false';
+    }
+
+    // Función para limpiar el formulario al crear nueva pregunta
+    function limpiarFormulario() {
+        document.getElementById('IdPregunta').value = '0'; // ID inicializado para nuevas preguntas
+        document.getElementById('TextoPregunta').value = '';
+        document.getElementById('EstadoPregunta').value = 'true';
+    }
+</script>

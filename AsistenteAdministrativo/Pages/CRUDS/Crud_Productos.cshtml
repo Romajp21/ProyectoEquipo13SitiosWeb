@@ -1,0 +1,184 @@
+﻿@page
+@model AsistenteAdministrativo.Pages.CRUDS.ProductosModel
+@{
+    ViewData["Title"] = "Gestión de Productos de Tatuajes";
+}
+
+<div class="container my-4">
+    <h2 class="text-center">Tablero Administrativo</h2>
+    <h3 class="text-center">Productos de Tatuajes</h3>
+
+    <div class="text-end mb-3">
+        <a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#crearModal">+ Agregar Producto</a>
+    </div>
+
+    <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>ID Producto</th>
+                <th>Nombre</th>
+                <th>Categoría</th>
+                <th>Cantidad</th>
+                <th>Precio</th>
+                <th>Descripción</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var producto in Model.ListaProductos)
+            {
+                <tr>
+                    <td>@producto.IdProducto</td>
+                    <td>@producto.NombreProducto</td>
+                    <td>@producto.Categoria</td>
+                    <td>@producto.Cantidad</td>
+                    <td>$@producto.Precio</td>
+                    <td>@producto.Descripcion</td>
+                    <td>@(producto.Estado ? "Activo" : "Inactivo")</td>
+                    <td>
+                        <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editarModal"
+                                data-id="@producto.IdProducto"
+                                data-nombre="@producto.NombreProducto"
+                                data-categoria="@producto.IdCategoriaProducto"
+                                data-cantidad="@producto.Cantidad"
+                                data-precio="@producto.Precio"
+                                data-descripcion="@producto.Descripcion"
+                                data-estado="@producto.Estado">
+                            Editar
+                        </button>
+                        <form method="post" asp-page-handler="Eliminar" class="d-inline">
+                            <input type="hidden" name="IdProductoEliminar" value="@producto.IdProducto" />
+                            <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="modal fade" id="crearModal" tabindex="-1" aria-labelledby="crearModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="crearModalLabel">Agregar Producto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" asp-page-handler="Crear">
+                <div class="modal-body">
+                    <!-- Nombre -->
+                    <div class="mb-3">
+                        <label for="NombreProducto" class="form-label">Nombre del Producto</label>
+                        <input type="text" class="form-control" id="NombreProducto" name="NuevoProducto.NombreProducto" required />
+                    </div>
+                    <!-- Categoría -->
+                    <div class="mb-3">
+                        <label for="CategoriaProducto" class="form-label">Categoría</label>
+                        <select class="form-select" id="CategoriaProducto" name="NuevoProducto.IdCategoriaProducto" required>
+                            <option value="" disabled selected>Seleccione una categoría</option>
+                            <!-- Itera sobre las categorías -->
+                            @foreach (var categoria in Model.ListaCategorias)
+                            {
+                                <option value="@categoria.IdCategoriaProducto">@categoria.CategoriaProducto</option>
+                            }
+                        </select>
+                    </div>
+                    <!-- Cantidad -->
+                    <div class="mb-3">
+                        <label for="Cantidad" class="form-label">Cantidad</label>
+                        <input type="number" class="form-control" id="Cantidad" name="NuevoProducto.Cantidad" required />
+                    </div>
+                    <!-- Precio -->
+                    <div class="mb-3">
+                        <label for="Precio" class="form-label">Precio</label>
+                        <input type="number" class="form-control" id="Precio" name="NuevoProducto.Precio" step="0.01" required />
+                    </div>
+                    <!-- Descripción -->
+                    <div class="mb-3">
+                        <label for="Descripcion" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="Descripcion" name="NuevoProducto.Descripcion"></textarea>
+                    </div>
+                    <!-- Estado -->
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="Estado" name="NuevoProducto.Estado" />
+                        <label for="Estado" class="form-check-label">Activo</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Modal para Editar -->
+<div class="modal fade" id="editarModal" tabindex="-1" aria-labelledby="editarModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editarModalLabel">Editar Producto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" asp-page-handler="Editar">
+                <div class="modal-body">
+                    <input type="hidden" id="editarIdProducto" name="ProductoEditar.IdProducto" />
+                    <div class="mb-3">
+                        <label for="editarNombreProducto" class="form-label">Nombre del Producto</label>
+                        <input type="text" class="form-control" id="editarNombreProducto" name="ProductoEditar.NombreProducto" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="editarIdCategoriaProducto" class="form-label">Categoría</label>
+                        <select class="form-select" id="editarIdCategoriaProducto" name="ProductoEditar.IdCategoriaProducto" required>
+                            <option value="" disabled>Seleccione una categoría</option>
+                            @foreach (var categoria in Model.ListaCategorias)
+                            {
+                                <option value="@categoria.IdCategoriaProducto">@categoria.CategoriaProducto</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editarCantidad" class="form-label">Cantidad</label>
+                        <input type="number" class="form-control" id="editarCantidad" name="ProductoEditar.Cantidad" min="0" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="editarPrecio" class="form-label">Precio</label>
+                        <input type="number" class="form-control" id="editarPrecio" name="ProductoEditar.Precio" step="0.01" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="editarDescripcion" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="editarDescripcion" name="ProductoEditar.Descripcion"></textarea>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="editarEstado" name="ProductoEditar.Estado" />
+                        <label class="form-check-label" for="editarEstado">Activo</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const editarModal = document.getElementById('editarModal');
+        editarModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            document.getElementById('editarIdProducto').value = button.getAttribute('data-id');
+            document.getElementById('editarNombreProducto').value = button.getAttribute('data-nombre');
+            document.getElementById('editarIdCategoriaProducto').value = button.getAttribute('data-categoria');
+            document.getElementById('editarCantidad').value = button.getAttribute('data-cantidad');
+            document.getElementById('editarPrecio').value = button.getAttribute('data-precio');
+            document.getElementById('editarDescripcion').value = button.getAttribute('data-descripcion');
+            document.getElementById('editarEstado').checked = button.getAttribute('data-estado') === "True";
+            });
+        });
+</script>

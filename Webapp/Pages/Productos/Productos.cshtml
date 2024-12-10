@@ -1,0 +1,80 @@
+﻿@page
+@model Webapp.Pages.Productos.ProductosModel
+@{
+    ViewData["Title"] = "Punto de Venta - Productos";
+}
+
+<div class="container my-4">
+    <h2 class="text-white">Tienda</h2>
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-white">Inicio</a></li>
+            <li class="breadcrumb-item text-white">Suministros</li>
+            <li class="breadcrumb-item active text-white" aria-current="page">Máquinas de Tatuaje</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <!-- Sidebar de Filtros -->
+        <aside class="col-md-3">
+            <div class="mb-4">
+                <h5 class="text-white">Categorías</h5>
+                <ul class="list-group">
+                    <li class="list-group-item bg-dark text-white">
+                        <a asp-page="/Productos/Productos" class="text-decoration-none text-white">Todos los Productos</a>
+                    </li>
+                    @foreach (var categoria in Model.Categorias)
+                    {
+                        <li class="list-group-item bg-dark text-white">
+                            <a asp-page="/Productos/Productos" asp-route-CategoriaSeleccionada="@categoria.IdCategoriaProducto"
+                               asp-route-OrdenSeleccionado="@Model.OrdenSeleccionado" class="text-decoration-none text-white">
+                                @categoria.Categoriaproducto
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </div>
+
+            <div class="mb-4">
+                <h5 class="text-white">Ordenar Por</h5>
+                <form method="get" asp-page="/Productos/Productos">
+                    <input type="hidden" name="CategoriaSeleccionada" value="@Model.CategoriaSeleccionada" />
+                    <div class="form-check text-white">
+                        <input class="form-check-input" type="radio" name="OrdenSeleccionado" value="low" id="lowToHigh" @(Model.OrdenSeleccionado == "low" ? "checked" : "") />
+                        <label class="form-check-label custom-text-color" for="lowToHigh">Precio - Menor a Mayor</label>
+                    </div>
+                    <div class="form-check text-white">
+                        <input class="form-check-input" type="radio" name="OrdenSeleccionado" value="high" id="highToLow" @(Model.OrdenSeleccionado == "high" ? "checked" : "") />
+                        <label class="form-check-label custom-text-color" for="highToLow">Precio - Mayor a Menor</label>
+                    </div>
+                    <button type="submit" class="btn btn-sm btn-primary mt-3">Aplicar</button>
+                </form>
+            </div>
+        </aside>
+
+        <!-- Área de Productos -->
+        <section class="col-md-9">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="text-white">Máquinas de Tatuaje</h5>
+            </div>
+
+            <div class="row">
+                @foreach (var product in Model.Productos)
+                {
+                    <div class="col-md-4 mb-4">
+                        <div class="card bg-dark text-white border-light">
+                            <img src="@product.ImagenUrl" class="card-img-top" alt="@product.NombreProducto">
+                            <div class="card-body">
+                                <h6 class="card-title">@product.NombreProducto</h6>
+                                <p class="card-text">$@product.Precio</p>
+                                <a asp-page="/Productos/Detalle" asp-route-id="@product.IdProducto" class="btn btn-primary btn-sm">Ver Detalles</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </section>
+    </div>
+</div>
+   
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />

@@ -1,0 +1,93 @@
+﻿@page
+@model Webapp.Pages.Cliente.CuidadoTatuajesModel
+@{
+    ViewData["Title"] = "Cuidados del Tatuaje";
+}
+
+<style>
+    .cuidados-card {
+        background: linear-gradient(to bottom, #ffffff, #f0f0f0);
+        border: 1px solid #ddd;
+        border-radius: 15px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .cuidados-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .cuidados-card img {
+            height: 220px;
+            width: 100%;
+            object-fit: cover;
+        }
+
+        .cuidados-card .card-body {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .cuidados-card .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .cuidados-card .card-text {
+            font-size: 1rem;
+            color: #000;
+            line-height: 1.5;
+        }
+
+    .text-highlight {
+        color: ##000;
+        font-weight: bold;
+    }
+
+    .alert {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+</style>
+
+<div class="text-center mb-5">
+    <h1 class="display-4 text-highlight">Cuidados del Tatuaje</h1>
+    <p class="text-muted">Consejos esenciales para mantener tu tatuaje impecable y saludable.</p>
+</div>
+
+<div class="row justify-content-center">
+    @if (Model.Cuidados != null && Model.Cuidados.Any())
+    {
+        @foreach (var cuidado in Model.Cuidados)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card cuidados-card">
+                    @if (!string.IsNullOrEmpty(cuidado.Imagen))
+                    {
+                        <img src="data:image/png;base64,@cuidado.Imagen" class="card-img-top" alt="Imagen de Cuidado" />
+                    }
+                    else
+                    {
+                        <img src="~/images/default-placeholder.png" class="card-img-top" alt="Sin Imagen Disponible" />
+                    }
+                    <div class="card-body">
+                        <h3 class="card-title">Cuidado @cuidado.IdCuidadosDelTatuaje</h3>
+                        <p class="card-text">@cuidado.DescripcionCuidadosDelTatuaje</p>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="col-12 text-center">
+            <div class="alert">
+                No hay cuidados del tatuaje disponibles en este momento.
+            </div>
+        </div>
+    }
+</div>

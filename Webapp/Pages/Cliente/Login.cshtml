@@ -1,0 +1,100 @@
+﻿@page
+@model Webapp.Pages.Cliente.Pages_Cliente_Login
+@{
+}
+
+<html>
+<head>
+    <title>Ink Studio - Inicio Sesion</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 90%; /* Flexible para pantallas pequeñas */
+            width: 400px;
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #333;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+            .form-group input[type="email"],
+            .form-group input[type="password"] {
+                width: 100%;
+                padding: 10px;
+                border: none;
+                border-radius: 5px;
+                background-color: #333;
+                color: #fff;
+                box-sizing: border-box;
+            }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #fff;
+            color: #000;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+            .btn:hover {
+                background-color: #444;
+            }
+
+        .links {
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <i class="fas fa-feather-alt"></i>
+            <span>Ink Studio</span>
+        </div>
+        <h2>Bienvenido </h2>
+        <form>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" placeholder="Enter your email">
+            </div>
+            <div class="form-group">
+                <label for="password">Contraseña</label>
+                <input type="password" id="password" placeholder="Enter your password">
+            </div>
+            <div class="form-group remember-me">
+                <input type="checkbox" id="remember-me">
+                <label for="remember-me">Recuerda me</label>
+            </div>
+            <button type="submit" class="btn">Iniciar</button>
+        </form>
+        <div class="links">
+            <p><a href="#">Olvidaste tu contraseña?</a></p>
+            <p>No tienes una cuenta? <a href="registro.html">Registrate</a></p>
+        </div>
+    </div>
+</body>
+</html>

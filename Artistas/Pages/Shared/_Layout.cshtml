@@ -1,0 +1,147 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Artistas</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+    <style>
+        /* Configuración general */
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Barra superior */
+        header {
+            background-color: #343a40;
+            color: #ffffff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+        }
+
+            header h3 {
+                margin: 0;
+                display: flex;
+                align-items: center;
+            }
+
+                header h3 i {
+                    margin-right: 10px;
+                }
+
+            header .user-options a {
+                color: #ffffff;
+                margin-left: 15px;
+                text-decoration: none;
+            }
+
+                header .user-options a:hover {
+                    text-decoration: underline;
+                }
+
+        /* Contenedor principal */
+        .main-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Menú lateral */
+        nav {
+            width: 250px;
+            background-color: #343a40;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+        }
+
+            nav a {
+                color: #ffffff;
+                padding: 10px 15px;
+                text-decoration: none;
+                display: flex;
+                align-items: center;
+            }
+
+                nav a i {
+                    margin-right: 10px;
+                }
+
+                nav a:hover {
+                    background-color: #495057;
+                }
+
+        /* Contenido principal */
+        .content {
+            flex: 1;
+            background-color: #f8f9fa;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #343a40;
+            color: #ffffff;
+            text-align: center;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Barra superior -->
+    <header>
+        <h3>
+            <i class="fas fa-tint"></i> Artistas
+        </h3>
+        <div class="user-options">
+            @if (User.Identity.IsAuthenticated)
+            {
+                <span><i class="fas fa-user"></i> @User.Identity.Name</span>
+                <a href="/Account/Logout"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+            }
+            else
+            {
+                <a href="/Account/Login"><i class="fas fa-sign-in-alt"></i> Iniciar Sesión</a>
+            }
+        </div>
+    </header>
+
+    <!-- Contenedor principal -->
+    <div class="main-container">
+        <!-- Menú lateral -->
+        <nav>
+            <a href="/Index"><i class="fas fa-home"></i> Home</a>
+            <a href="/CRUD/FE_TableroArtista"><i class="fas fa-user-clock"></i> Tablero</a>
+            <a href="/CRUD/FE_Galeria"><i class="fas fa-images"></i> Galería</a>
+            <a href="/CRUD/FE_GaleriaCategorias"><i class="fas fa-list"></i> Categorías</a>
+            <a href="/CRUD/FE_HorarioArtista"><i class="fas fa-clock"></i> Horarios</a>
+            <a href="/CRUD/FE_AgendaArtista"><i class="fas fa-calendar"></i> Agenda</a>
+            <a href="/CRUD/FE_ArtistaCitas"><i class="fas fa-user-clock"></i> Citas</a>
+            <a href="/Perfil/Perfil"><i class="fas fa-user-clock"></i> Perfil</a>
+         
+           
+        </nav>
+
+        <!-- Contenido -->
+        <div class="content">
+            @RenderBody()
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        &copy; 2024 - Artistas - <a href="/Privacy" class="text-light">Privacy</a>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+﻿@page
+@model AsistenteAdministrativo.Pages.CRUDS.FE_CategoriaTatuajesModel
+@{
+    ViewData["Title"] = "Gestión de Categorías de Tatuajes";
+}
+
+<h2>Gestión de Categorías de Tatuajes</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre de Categoría</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Categorias.Any())
+        {
+            foreach (var categoria in Model.Categorias)
+            {
+                <tr>
+                    <td>@categoria.IdCategoriaTatuajes</td>
+                    <td>@categoria.NombreCategoria</td>
+                    <td>@(categoria.Estado ? "Activo" : "Inactivo")</td>
+                    <td>
+                        <button class="btn btn-primary" asp-page-handler="Actualizar" asp-route-id="@categoria.IdCategoriaTatuajes">Editar</button>
+                        <button class="btn btn-danger" asp-page-handler="Eliminar" asp-route-id="@categoria.IdCategoriaTatuajes">Eliminar</button>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="4">No hay categorías disponibles.</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h3>Agregar / Editar Categoría</h3>
+
+<form method="post">
+    <div class="form-group">
+        <label>Nombre de Categoría</label>
+        <input asp-for="NuevaCategoria.NombreCategoria" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>Estado</label>
+        <select asp-for="NuevaCategoria.Estado" class="form-control">
+            <option value="true">Activo</option>
+            <option value="false">Inactivo</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-success" asp-page-handler="Registrar">Guardar</button>
+</form>

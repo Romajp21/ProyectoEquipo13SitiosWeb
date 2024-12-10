@@ -1,0 +1,111 @@
+﻿@page
+@model Jefatura.Pages.Aprobaciones.FE_AprobacionMembresiaContenidoModel
+@{
+    ViewData["Title"] = "Gestión de Aprobaciones de Contenidos de Membresías";
+}
+
+<h2>Gestión de Aprobaciones de Contenidos de Membresías</h2>
+
+@if (!string.IsNullOrEmpty(Model.Mensaje))
+{
+    <div id="mensajeAlerta" class="alert alert-info text-center" role="alert">
+        @Model.Mensaje
+    </div>
+}
+
+<div class="card">
+    <div class="card-header">
+        <h4>Aprobaciones de Contenidos</h4>
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>ID Membresía</th>
+                    <th>Nombre Membresía</th>
+                    <th>Nombre Contenido</th>
+                    <th>Comentario del Asistente</th>
+                    <th>Estado</th>
+                    <th>Comentario del Jefe</th>
+                    <th>Aprobado Por</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var aprobacion in Model.Aprobaciones)
+                {
+                    <tr>
+                        <!-- Formulario individual para Guardar o Actualizar -->
+                        <form method="post">
+                        <td>
+                            <input type="hidden" name="id" value="@aprobacion.IdAprobacion" />
+                            <input type="hidden" name="idMembresContenido" value="@aprobacion.IdMembresContenido" />
+                                @aprobacion.IdMembresia
+                        </td>
+                        <td>@aprobacion.NombreMembresia</td>
+                        <td>@aprobacion.NombreContenido</td>
+                        <td>@aprobacion.ComentarioAsistente</td>
+
+                        <!-- Selección de Estado sin lógica C# en los atributos de opción -->
+                        <td>
+                            <select name="estado" class="form-control">
+                                <option value="1" selected="@(aprobacion.Estado == true ? "selected" : null)">Aprobar</option>
+                                <option value="0" selected="@(aprobacion.Estado == false ? "selected" : null)">Rechazar</option>
+                            </select>
+                        </td>
+
+                        <!-- Comentario del jefe en una celda -->
+                        <td>
+                            <input type="text" name="comentario" class="form-control" value="@aprobacion.Comentario" placeholder="Comentario opcional" />
+                        </td>
+
+                        <!-- Columna "Aprobado Por": input editable si el valor es 0, texto fijo si es diferente de 0 -->
+                        <td>
+                                @if (aprobacion.AprobadoPor == 0)
+                                {
+                                <input type="text" name="aprobadoPor" class="form-control" placeholder="ID Aprobador" />
+                                }
+                                else
+                                {
+                                <input type="hidden" name="aprobadoPor" value="@aprobacion.AprobadoPor" />
+                                    @aprobacion.AprobadoPor
+                                }
+                        </td>
+
+                        <td>
+                                @if (aprobacion.IdAprobacion == null || aprobacion.IdAprobacion == 0)
+                                {
+                                <button type="submit" asp-page-handler="GuardarAprobacion" class="btn btn-success btn-sm">Guardar</button>
+                                }
+                                else
+                                {
+                                <button type="submit" asp-page-handler="ActualizarAprobacion" class="btn btn-primary btn-sm">Actualizar</button>
+                                }
+                        </td>
+                        </form>
+
+                        <!-- Formulario para Eliminar -->
+                        <td>
+                            <form method="post" asp-page-handler="Eliminar" asp-route-id="@aprobacion.IdAprobacion">
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Está seguro de eliminar esta aprobación?');">Eliminar</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+  
+</div>
+  <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const alertBox = document.getElementById("mensajeAlerta");
+            if (alertBox) {
+                setTimeout(() => {
+                    alertBox.style.transition = "opacity 0.5s ease";
+                    alertBox.style.opacity = "0";
+                    setTimeout(() => alertBox.remove(), 500); // Remover el elemento después de la animación
+                }, 5000); // Tiempo para ocultar el mensaje (5 segundos)
+            }
+        });
+    </script>

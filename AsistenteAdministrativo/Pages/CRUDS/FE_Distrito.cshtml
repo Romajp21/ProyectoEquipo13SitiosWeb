@@ -1,0 +1,46 @@
+﻿@page
+@model AsistenteAdministrativo.Pages.CRUDS.FE_DistritoModel
+
+<h2>Gestión de Distritos</h2>
+
+<form method="post">
+    <div>
+        <label>Nombre del Distrito:</label>
+        <input asp-for="NuevoDistrito.NombreDistrito" />
+    </div>
+    <div>
+        <label>Cantón:</label>
+        <select asp-for="NuevoDistrito.IdCanton">
+            <option value="">Seleccione un cantón</option>
+            @foreach (var canton in Model.Cantones)
+            {
+                <option value="@canton.IdCanton">@canton.NombreCanton</option>
+            }
+        </select>
+    </div>
+    <button type="submit" asp-page-handler="Registrar">Registrar</button>
+</form>
+
+<table>
+    <thead>
+        <tr>
+            <th>Nombre del Distrito</th>
+            <th>Cantón</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Distritos)
+        {
+            <tr>
+                <td>@item.NombreDistrito</td>
+                <td>@Model.ObtenerNombreCanton(item.IdCanton)</td>
+                <td>
+                    <form method="post" asp-page-handler="Eliminar" asp-route-id="@item.IdDistrito">
+                        <button type="submit">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

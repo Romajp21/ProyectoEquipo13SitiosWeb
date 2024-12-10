@@ -1,0 +1,120 @@
+﻿@page
+@model Webapp.Pages.Cliente.FE_GaleriaDinamicaModel
+@{
+    ViewData["Title"] = "Galería Dinámica";
+}
+
+<html>
+<head>
+    <title>Galería Dinámica - Ink Studio</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: #000;
+            color: #fff;
+        }
+
+        .container {
+            padding: 30px;
+        }
+
+        .filters {
+            margin-bottom: 20px;
+        }
+
+            .filters label {
+                margin-right: 10px;
+                font-size: 16px;
+            }
+
+            .filters select {
+                padding: 5px;
+                font-size: 16px;
+                border-radius: 5px;
+                border: 1px solid #ccc;
+                outline: none;
+            }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .gallery-item {
+            background-color: #111;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+            .gallery-item img {
+                width: 100%;
+                border-radius: 5px;
+                margin-bottom: 10px;
+            }
+
+            .gallery-item h3 {
+                font-size: 18px;
+                margin-bottom: 5px;
+            }
+
+            .gallery-item p {
+                font-size: 14px;
+                color: #aaa;
+            }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center">Galería Dinámica</h1>
+        <p class="text-center text-muted">Explora nuestras imágenes filtrando por categoría o artista.</p>
+
+        <!-- Filtros -->
+        <div class="filters">
+            <label for="categoria">Categoría:</label>
+            <select id="categoria">
+                <option value="todas">Todas</option>
+                <option value="realismo">Realismo</option>
+                <option value="tradicional">Tradicional</option>
+                <option value="ilustrativo">Ilustrativo</option>
+                <option value="japonés">Japonés</option>
+            </select>
+
+            <label for="artista">Artista:</label>
+            <select id="artista">
+                <option value="todos">Todos</option>
+                <option value="artista1">Artista 1</option>
+                <option value="artista2">Artista 2</option>
+                <option value="artista3">Artista 3</option>
+            </select>
+
+            <button style="margin-left: 10px; padding: 5px 10px; border: none; background-color: #fff; color: #000; border-radius: 5px; cursor: pointer;">
+                Filtrar
+            </button>
+        </div>
+
+        <!-- Galería -->
+        <div class="gallery">
+            @if (Model.ImagenesGaleria.Count > 0)
+            {
+                @foreach (var imagen in Model.ImagenesGaleria)
+                {
+                    <div class="gallery-item">
+                        <img src="@imagen.RutaImagen" alt="@imagen.DescripcionTatuaje" />
+                        <h3>@imagen.DescripcionTatuaje</h3>
+                        <p>Artista: @imagen.IdArtista</p>
+                    </div>
+                }
+            }
+            else
+            {
+                <p class="text-center text-muted">No hay imágenes disponibles en la galería.</p>
+            }
+        </div>
+    </div>
+</body>
+</html>

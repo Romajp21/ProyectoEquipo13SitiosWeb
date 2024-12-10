@@ -1,0 +1,106 @@
+﻿@page
+@model Jefatura.Pages.Aprobacion.ProductoApbModel
+@{
+    ViewData["Title"] = "Aprobación de Productos";
+}
+
+<h2 class="text-center mt-3">Aprobación de Productos</h2>
+
+<div class="table-responsive">
+    <table class="table table-striped mt-4">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Cantidad</th>
+                <th>Precio</th>
+                <th>Categoría</th>
+                <th>Imagen</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var producto in Model.Productos)
+            {
+                <tr>
+                    <td>@producto.IdProducto</td>
+                    <td>@producto.NombreProducto</td>
+                    <td>@producto.Descripcion</td>
+                    <td>@producto.Cantidad</td>
+                    <td>@producto.Precio</td>
+                    <td>@producto.CategoriaProducto</td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(producto.ImagenUrl))
+                        {
+                            <img src="@producto.ImagenUrl" alt="Producto" class="img-thumbnail" style="max-height: 100px;" />
+                        }
+                        else
+                        {
+                            <span>No disponible</span>
+                        }
+                    </td>
+                    <td>@(producto.Estado ? "Activo" : "Inactivo")</td>
+                    <td>
+                        <button class="btn btn-sm @(producto.Estado ? "btn-danger" : "btn-success")"
+                                data-bs-toggle="modal"
+                                data-bs-target="#confirmModal"
+                                data-id="@producto.IdProducto"
+                                data-nombre="@producto.NombreProducto"
+                                data-nuevoestado="@(producto.Estado ? "false" : "true")"
+                                data-estadoactual="@(producto.Estado ? "Activo" : "Inactivo")">
+                            @(producto.Estado ? "Desactivar" : "Activar")
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal de Confirmación -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmModalLabel">Confirmar acción</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <p id="modalMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <form method="post" asp-page-handler="CambiarEstado">
+                    <input type="hidden" name="IdProducto" id="productoId" />
+                    <input type="hidden" name="NuevoEstado" id="nuevoEstado" />
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Confirmar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const confirmModal = document.getElementById('confirmModal');
+            confirmModal.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                const id = button.getAttribute('data-id');
+                const nombre = button.getAttribute('data-nombre');
+                const nuevoEstado = button.getAttribute('data-nuevoestado');
+                const estadoActual = button.getAttribute('data-estadoactual');
+
+                const modalMessage = document.getElementById('modalMessage');
+                const productoIdInput = document.getElementById('productoId');
+                const nuevoEstadoInput = document.getElementById('nuevoEstado');
+
+                modalMessage.textContent = `¿Está seguro que desea cambiar el estado del producto "${nombre}" de ${estadoActual} a ${(nuevoEstado === "true" ? "Activo" : "Inactivo")} ?`;
+                productoIdInput.value = id;
+                nuevoEstadoInput.value = nuevoEstado;
+            });
+        });
+    </script>
+}

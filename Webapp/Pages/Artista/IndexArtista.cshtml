@@ -1,0 +1,23 @@
+﻿@page
+@model Webapp.Pages.Artista.IndexArtistaModel
+@{
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h1 class="text-center text-white">Artistas Destacados</h1>
+
+<div class="container artistas-grid">
+    @foreach (var artista in Model.Artistas)
+    {
+            <div class="artista-card" onclick="window.location.href='@Url.Page("/Artista/Perfil", new { id = artista.IdArtista })'">
+                <img src="@(string.IsNullOrEmpty(artista.ImagenPerfil)
+        ? "/images/Tatuador1.jpg"
+        : $"data:image/png;base64,{artista.ImagenPerfil}")"
+                     alt="@artista.Nombre" class="artista-imagen" />
+                <div class="artista-info">
+                    <h2>@artista.Nombre @artista.Apellidos</h2>
+                    <p>@string.Join(", ", artista.Especialidades)</p>
+                </div>
+            </div>
+    }
+</div>

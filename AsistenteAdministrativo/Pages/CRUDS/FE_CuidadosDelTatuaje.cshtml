@@ -1,0 +1,139 @@
+﻿@page
+@model AsistenteAdministrativo.Pages.CRUDS.CRUD_CuidadosTatuajeModel
+@{
+    ViewData["Title"] = "Gestión de Cuidados del Tatuaje";
+}
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+
+<div class="container my-4">
+    <h2 class="text-center">Gestión de Cuidados del Tatuaje</h2>
+
+    <!-- Botón para agregar un nuevo cuidado -->
+    <div class="text-end mb-3">
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#crearModal">+ Agregar Cuidado</button>
+    </div>
+
+    <!-- Tabla de cuidados -->
+    <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Descripción</th>
+                <th>Estado</th>
+                <th>Imagen</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.ListaCuidados != null && Model.ListaCuidados.Any())
+            {
+                @foreach (var cuidado in Model.ListaCuidados)
+                {
+                    <tr>
+                        <td>@cuidado.IdCuidadosDelTatuaje</td>
+                        <td>@cuidado.DescripcionCuidadosDelTatuaje</td>
+                        <td>@(cuidado.Estado ? "Activo" : "Inactivo")</td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(cuidado.Imagen))
+                            {
+                                <img src="@cuidado.Imagen" alt="Imagen del Cuidado" width="100" />
+                            }
+                            else
+                            {
+                                <span>Sin Imagen</span>
+                            }
+                        </td>
+                        <td>
+                            <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editarModal"
+                                    data-id="@cuidado.IdCuidadosDelTatuaje"
+                                    data-descripcion="@cuidado.DescripcionCuidadosDelTatuaje"
+                                    data-imagen="@cuidado.Imagen">
+                                Editar
+                            </button>
+
+                            <form method="post" asp-page-handler="Eliminar" class="d-inline">
+                                <input type="hidden" name="IdCuidadoEliminar" value="@cuidado.IdCuidadosDelTatuaje" />
+                                <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="5" class="text-center">No hay cuidados registrados.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal para Crear -->
+<div class="modal fade" id="crearModal" tabindex="-1" aria-labelledby="crearModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" enctype="multipart/form-data" asp-page-handler="Crear">
+                <div class="modal-header">
+                    <h5 class="modal-title">Agregar Cuidado</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="DescripcionCuidadosDelTatuaje" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="DescripcionCuidadosDelTatuaje" name="NuevoCuidado.DescripcionCuidadosDelTatuaje" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="Imagen" class="form-label">Subir Imagen</label>
+                        <input type="file" class="form-control" id="Imagen" name="Imagen" accept="image/*" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Editar -->
+<div class="modal fade" id="editarModal" tabindex="-1" aria-labelledby="editarModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" enctype="multipart/form-data" asp-page-handler="Editar">
+                <div class="modal-body">
+                    <input type="hidden" id="editarId" name="CuidadoEditar.IdCuidadosDelTatuaje" />
+                    <div class="mb-3">
+                        <label for="editarDescripcion" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="editarDescripcion" name="CuidadoEditar.DescripcionCuidadosDelTatuaje" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editarImagen" class="form-label">Cambiar Imagen</label>
+                        <input type="file" class="form-control" id="editarImagen" name="Imagen" accept="image/*" />
+                        <img id="vistaPrevia" class="img-thumbnail mt-2" style="max-width: 200px;" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const editarModal = document.getElementById('editarModal');
+        editarModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+                const id = button.getAttribute('data-id');
+            const descripcion = button.getAttribute('data-descripcion');
+
+            document.getElementById('editarId').value = id;
+            document.getElementById('editarDescripcion').value = descripcion || '';
+            });
+        });
+</script>

@@ -1,0 +1,218 @@
+﻿@page "{idArtista?}"
+@model Artistas.Pages.CRUD.FE_AgendaArtistaModel
+@{
+    ViewData["Title"] = "Gestión de Agenda de Artistas";
+}
+
+<div class="container mt-4">
+    <!-- Título -->
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <h1 class="text-primary fw-bold">🗓️ Gestión de Bloqueo de Agenda Artistas</h1>
+        </div>
+    </div>
+
+    <!-- Botón para abrir el modal -->
+    <div class="row mb-3">
+        <div class="col-12 text-end">
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAgenda" onclick="limpiarFormulario()">
+                <i class="fas fa-plus"></i> Registrar o Actualizar Agenda
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="modalAgenda" tabindex="-1" aria-labelledby="modalAgendaLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="modalAgendaLabel">
+                        @(Model.AgendaForm.IdAgendaArtista > 0 ? "Editar Agenda" : "Registrar Agenda")
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" asp-page-handler="Guardar">
+                        <input type="hidden" id="IdAgendaArtista" name="AgendaForm.IdAgendaArtista" value="@Model.AgendaForm.IdAgendaArtista" />
+
+
+                        <!-- ID del Artista -->
+                        <div class="form-group mb-3">
+                            <label for="IdArtista">ID del Artista</label>
+                            <input type="number" id="IdArtista" name="AgendaForm.IdArtista"
+                                   value="@Model.AgendaForm.IdArtista"
+                                   class="form-control"
+                            @(Model.AgendaForm.IdAgendaArtista > 0 ? "readonly" : "") />
+                        </div>
+
+                        <!-- ID del Horario -->
+                        <div class="form-group mb-3">
+                            <label for="IdHorarioArtista">ID del Horario</label>
+                            <select id="IdHorarioArtista" name="AgendaForm.IdHorarioArtista" class="form-control" required onchange="actualizarFecha()">
+                                <option value="">Seleccione un horario</option>
+                                @foreach (var horario in Model.HorariosArtista)
+                                {
+                                    <option value="@horario.IdHorarioArtista" data-fecha="@horario.Fecha.ToString("yyyy-MM-dd")">
+                                        ID: @horario.IdHorarioArtista - Fecha: @(horario.Fecha.ToString("dd/MM/yyyy"))
+                                    </option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- Fecha -->
+                        <div class="form-group mb-3">
+                            <label for="Fecha">Fecha</label>
+                            <input type="date" id="Fecha" name="AgendaForm.Fecha"
+                                   value="@(Model.AgendaForm.Fecha == default(DateTime) ? "" : Model.AgendaForm.Fecha.ToString("yyyy-MM-dd"))"
+                                   class="form-control" readonly />
+                        </div>
+                        <input type="hidden" id="IdAgendaArtista" name="AgendaForm.IdAgendaArtista" value="@Model.AgendaForm.IdAgendaArtista" />
+
+                        <!-- Hora Inicio -->
+                        <div class="form-group mb-3">
+                            <label for="HoraInicio">Hora Inicio</label>
+                            <input type="time" id="HoraInicio" name="AgendaForm.HoraInicio" value="@Model.AgendaForm.HoraInicio.ToString(@"hh\:mm")" class="form-control" required />
+                        </div>
+
+                        <!-- Hora Fin -->
+                        <div class="form-group mb-3">
+                            <label for="HoraFin">Hora Fin</label>
+                            <input type="time" id="HoraFin" name="AgendaForm.HoraFin" value="@Model.AgendaForm.HoraFin.ToString(@"hh\:mm")" class="form-control" required />
+                        </div>
+
+                        <!-- Estado -->
+                        <div class="form-group mb-3">
+                            <label for="Estado">Estado</label>
+                            <select id="Estado" name="AgendaForm.Estado" class="form-control" @(Model.AgendaForm.IdAgendaArtista > 0 ? "disabled" : "")>
+                                <option value="Disponible" selected="@((Model.AgendaForm.Estado == "Disponible").ToString())">Disponible</option>
+                                <option value="Bloqueado" selected="@((Model.AgendaForm.Estado == "Bloqueado").ToString())">Bloqueado</option>
+                            </select>
+                        </div>
+
+                        <!-- Botones -->
+                        <div class="d-flex justify-content-between">
+                            <button type="submit" class="btn btn-success w-50">
+                                @(Model.AgendaForm.IdAgendaArtista > 0 ? "Actualizar" : "Registrar")
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary w-50" data-bs-dismiss="modal">Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla de agendas registradas -->
+    <div class="card shadow-sm">
+        <div class="card-header bg-secondary text-white">
+            <h4 class="mb-0">Agendas Registradas</h4>
+        </div>
+        <div class="card-body">
+            @if (Model.Agenda.Count > 0)
+            {
+                <table class="table table-hover table-bordered text-center">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID Artista</th>
+                            <th>ID Horario</th>
+                            <th>Fecha</th>
+                            <th>Hora Inicio</th>
+                            <th>Hora Fin</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var agenda in Model.Agenda)
+                        {
+                            <tr>
+                                <td>@agenda.IdArtista</td>
+                                <td>@agenda.IdHorarioArtista</td>
+                                <td>@agenda.Fecha.ToString("dd/MM/yyyy")</td>
+                                <td>@agenda.HoraInicio</td>
+                                <td>@agenda.HoraFin</td>
+                                <td>
+                                    <span class="badge @(agenda.Estado == "Disponible" ? "bg-success" : "bg-danger")">@agenda.Estado</span>
+                                </td>
+                                <td>
+                                    <button class="btn btn-warning btn-sm"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#modalAgenda"
+                                            onclick="cargarAgenda(@agenda.IdAgendaArtista)">
+                                        Editar
+                                    </button>
+                                    <form method="post" asp-page-handler="Eliminar">
+                                        <input type="hidden" name="AgendaForm.IdAgendaArtista" value="@agenda.IdAgendaArtista" />
+                                        <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <div class="alert alert-warning text-center">No hay agendas registradas.</div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script>
+    function cargarAgenda(idAgenda) {
+        fetch(`?handler=CargarAgenda&idAgenda=${idAgenda}`)
+            .then(response => response.json())
+            .then(data => {
+                // Asignar valores al formulario
+                document.getElementById("IdAgendaArtista").value = data.idAgenda; // Asegurar que el ID se asigna
+                document.getElementById("IdArtista").value = data.idArtista;
+                document.getElementById("IdHorarioArtista").value = data.idHorarioArtista;
+                document.getElementById("Fecha").value = data.fecha;
+                document.getElementById("HoraInicio").value = data.horaInicio;
+                document.getElementById("HoraFin").value = data.horaFin;
+                document.getElementById("Estado").value = data.estado;
+
+                // Bloquear campos que no deben ser editables en modo edición
+                // document.getElementById("IdArtista").setAttribute("readonly", true);
+                // document.getElementById("IdHorarioArtista").setAttribute("disabled", true);
+                // document.getElementById("Estado").setAttribute("disabled", true);
+
+                // Cambiar título del modal a "Editar Agenda"
+                document.getElementById("modalAgendaLabel").innerText = "Editar Agenda";
+
+                // Mostrar el modal
+                const modal = new bootstrap.Modal(document.getElementById("modalAgenda"));
+                modal.show();
+            })
+            .catch(error => console.error("Error al cargar la agenda:", error));
+    }
+
+
+
+    function limpiarFormulario() {
+        document.getElementById("modalAgendaLabel").innerText = "Registrar Agenda";
+        document.getElementById("IdAgendaArtista").value = ""; // Limpiar el ID para un nuevo registro
+        document.getElementById("IdArtista").value = "";
+        document.getElementById("IdHorarioArtista").value = "";
+        document.getElementById("Fecha").value = "";
+        document.getElementById("HoraInicio").value = "08:00";
+        document.getElementById("HoraFin").value = "17:00";
+        document.getElementById("Estado").value = "Disponible";
+
+        // Desbloquear campos para un nuevo registro
+        document.getElementById("IdArtista").removeAttribute("readonly");
+        document.getElementById("IdHorarioArtista").removeAttribute("disabled");
+        document.getElementById("Estado").removeAttribute("disabled");
+    }
+
+    function actualizarFecha() {
+        const selectHorario = document.getElementById("IdHorarioArtista");
+        const selectedOption = selectHorario.options[selectHorario.selectedIndex];
+        const fecha = selectedOption.getAttribute("data-fecha");
+        if (fecha) {
+            document.getElementById("Fecha").value = fecha;
+        }
+    }
+</script>

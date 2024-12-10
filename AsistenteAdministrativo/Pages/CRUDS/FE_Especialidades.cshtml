@@ -1,0 +1,45 @@
+﻿@page
+@model AsistenteAdministrativo.Pages.CRUDS.FE_EspecialidadesModel
+@{
+    ViewData["Title"] = "Especialidades";
+}
+<h2>Especialidades</h2>
+<p>@Model.Mensaje</p>
+
+<form method="post" asp-page-handler="Registrar">
+    <label>Nombre de Especialidad:</label>
+    <input type="text" asp-for="NuevaEspecialidad.NombreEspecialidad" />
+    <label>Estado:</label>
+    <select asp-for="NuevaEspecialidad.Estado">
+        <option value="1">Activo</option>
+        <option value="0">Inactivo</option>
+    </select>
+    <button type="submit">Agregar Especialidad</button>
+</form>
+
+<table>
+    <thead>
+        <tr>
+            <th>IdEspecialidad</th>
+            <th>Nombre Especialidad</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var especialidad in Model.Especialidades)
+        {
+            <tr>
+                <td>@especialidad.IdEspecialidad</td>
+                <td>@especialidad.NombreEspecialidad</td>
+                <td>@(especialidad.Estado ? "Activo" : "Inactivo")</td>
+                <td>
+                    <form method="post" asp-page-handler="Eliminar">
+                        <input type="hidden" name="id" value="@especialidad.IdEspecialidad" />
+                        <button type="submit">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,61 @@
+﻿@page
+@model AsistenteAdministrativo.Pages.CRUDS.FE_CalendarioModel
+@{
+    ViewData["Title"] = "Gestión de Calendario";
+}
+
+<h2>Gestión de Calendario</h2>
+
+<form method="post" asp-page-handler="Registrar">
+    <div class="form-group">
+        <label>Día de la Semana</label>
+        <input asp-for="NuevoBloque.DiaSemana" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>Hora de Inicio</label>
+        <input asp-for="NuevoBloque.HoraInicio" class="form-control" type="time" />
+    </div>
+    <div class="form-group">
+        <label>Hora de Fin</label>
+        <input asp-for="NuevoBloque.HoraFin" class="form-control" type="time" />
+    </div>
+    <button type="submit" class="btn btn-primary">Guardar</button>
+</form>
+
+<table class="table table-bordered mt-3">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Día de la Semana</th>
+            <th>Hora de Inicio</th>
+            <th>Hora de Fin</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var bloque in Model.Calendario)
+        {
+            <tr>
+                <td>@bloque.IdBloque</td>
+                <td>@bloque.DiaSemana</td>
+                <td>@bloque.HoraInicio</td>
+                <td>@bloque.HoraFin</td>
+                <td>
+                    <form method="post" asp-page-handler="Actualizar">
+                        <input type="hidden" name="id" value="@bloque.IdBloque" />
+                        <button type="submit" class="btn btn-warning">Editar</button>
+                    </form>
+                    <form method="post" asp-page-handler="Eliminar">
+                        <input type="hidden" name="id" value="@bloque.IdBloque" />
+                        <button type="submit" class="btn btn-danger">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (TempData["Mensaje"] != null)
+{
+    <div class="alert alert-info">@TempData["Mensaje"]</div>
+}

@@ -1,0 +1,160 @@
+﻿@page
+@model AsistenteAdministrativo.Pages.CRUDS.FE_MembresiasModel
+@{
+    ViewData["Title"] = "Gestión de Membresías";
+}
+
+<div class="container mt-4">
+    <!-- Mostrar mensaje de error o éxito -->
+    @if (TempData["Mensaje"] != null)
+    {
+        <div class="alert alert-info text-center" role="alert">
+            @TempData["Mensaje"]
+        </div>
+    }
+    <!-- Título -->
+    <div class="row">
+        <div class="col-12 text-center mb-4">
+            <h1 class="text-primary fw-bold">💳 Gestión de Membresías</h1>
+        </div>
+    </div>
+
+
+
+    <!-- Botón para abrir el modal -->
+    <div class="row mb-3">
+        <div class="col-12 text-end">
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalMembresia">
+                <i class="fas fa-plus"></i> Agregar Nueva Membresía
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="modalMembresia" tabindex="-1" aria-labelledby="modalMembresiaLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="modalMembresiaLabel">
+                        @(Model.NuevaMembresia.IdMembresia == 0 ? "Registrar Membresía" : "Actualizar Membresía")
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" asp-page-handler="Guardar">
+                        <input type="hidden" asp-for="NuevaMembresia.IdMembresia" />
+
+                        <div class="mb-3">
+                            <label asp-for="NuevaMembresia.NombreMembresia" class="form-label"></label>
+                            <input type="text" class="form-control" asp-for="NuevaMembresia.NombreMembresia" required />
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="NuevaMembresia.Precio" class="form-label"></label>
+                            <input type="number" class="form-control" asp-for="NuevaMembresia.Precio" step="0.01" required />
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="NuevaMembresia.Duracion" class="form-label"></label>
+                            <input type="number" class="form-control" asp-for="NuevaMembresia.Duracion" required />
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="NuevaMembresia.Estado" class="form-label"></label>
+                            <select class="form-control" asp-for="NuevaMembresia.Estado">
+                                <option value="true">Activo</option>
+                                <option value="false">Inactivo</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="NuevaMembresia.CreadoPor" class="form-label"></label>
+                            <input type="number" class="form-control" asp-for="NuevaMembresia.CreadoPor" required />
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <button type="submit" class="btn btn-success w-50">
+                                @(Model.NuevaMembresia.IdMembresia == 0 ? "Registrar" : "Actualizar")
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary w-50" data-bs-dismiss="modal">Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Listado de Membresías -->
+    <div class="card shadow-lg">
+        <div class="card-header bg-secondary text-white">
+            <h5 class="mb-0">Membresías Existentes</h5>
+        </div>
+        <div class="card-body">
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Precio</th>
+                        <th>Duración</th>
+                        <th>Estado</th>
+                        <th>Creado Por</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var membresia in Model.Membresias)
+                    {
+                        <tr>
+                            <td>@membresia.IdMembresia</td>
+                            <td>@membresia.NombreMembresia</td>
+                            <td>@membresia.Precio.ToString("C")</td>
+                            <td>@membresia.Duracion</td>
+                            <td>
+                                <span class="badge @(membresia.Estado ? "bg-success" : "bg-danger")">
+                                    @(membresia.Estado ? "Activo" : "Inactivo")
+                                </span>
+                            </td>
+                            <td>@membresia.CreadoPor</td>
+                            <td>
+                                <a href="javascript:void(0);" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#modalMembresia" onclick="cargarMembresia(@membresia.IdMembresia)">Editar</a>
+                                <form method="post" asp-page-handler="Eliminar" asp-route-id="@membresia.IdMembresia" class="d-inline" onsubmit="return confirm('¿Está seguro de eliminar esta membresía?');">
+                                    <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Script para cargar los datos de la membresía en el modal
+    function cargarMembresia(id) {
+        fetch(`?handler=CargarParaActualizar&id=${id}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data) {
+                    document.getElementById("modalMembresiaLabel").innerText = "Actualizar Membresía";
+                    document.querySelector("input[name='NuevaMembresia.IdMembresia']").value = data.idMembresia;
+                    document.querySelector("input[name='NuevaMembresia.NombreMembresia']").value = data.nombreMembresia;
+                    document.querySelector("input[name='NuevaMembresia.Precio']").value = data.precio;
+                    document.querySelector("input[name='NuevaMembresia.Duracion']").value = data.duracion;
+                    document.querySelector("select[name='NuevaMembresia.Estado']").value = data.estado ? "true" : "false";
+                    document.querySelector("input[name='NuevaMembresia.CreadoPor']").value = data.creadoPor;
+                }
+            })
+            .catch(error => console.error('Error al cargar la membresía:', error));
+    }
+
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const alert = document.querySelector(".alert");
+        if (alert) {
+            setTimeout(() => {
+                alert.classList.add("fade"); // Agregar clase para transición
+                setTimeout(() => alert.remove(), 500); // Remover del DOM después de la animación
+            }, 5000); // 5 segundos
+        }
+    });
+</script>

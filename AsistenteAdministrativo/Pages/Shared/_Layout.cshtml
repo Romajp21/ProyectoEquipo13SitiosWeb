@@ -1,0 +1,119 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - AsistenteAdministrativo</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/AsistenteAdministrativo.styles.css" asp-append-version="true" />
+
+    <style>
+        /* Personalización */
+        #sidebar {
+            min-height: 100vh;
+        }
+
+        #logo {
+            max-width: 180px;
+            margin-bottom: 20px;
+        }
+
+        .main-content {
+            margin-left: 250px; /* Match sidebar width */
+        }
+
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+        <div class="container-fluid">
+            <a class="navbar-brand d-flex align-items-center" asp-area="" asp-page="/Index">
+                <img id="logo" src="~/img/logo.png" alt="Logo" class="img-fluid me-2">
+                AsistenteAdministrativo
+            </a>
+            <div class="d-flex">
+                <!-- Login/Logout Section -->
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="/Account/Login">Iniciar Sesión</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="/Account/Logout">Cerrar Sesión</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar -->
+    <div class="d-flex">
+        <nav id="sidebar" class="bg-dark text-white flex-shrink-0 p-3" style="width: 250px;">
+            <div class="text-center">
+                <img src="~/img/user-profile.png" alt="User Profile" class="img-fluid rounded-circle mb-3" style="width: 100px;">
+                <h5 class="text-white">Administrador</h5>
+                <hr class="border-white">
+            </div>
+            <ul class="nav nav-pills flex-column mb-auto">
+                <li class="nav-item">
+                    <a class="nav-link text-white" asp-area="" asp-page="/Index">Home</a>
+                </li>
+                <li>
+                    <a class="nav-link text-white" asp-area="" asp-page="/CRUDS/FE_TableroAsistenteAdministrativo">Tablero</a>
+                </li>
+                <li>
+                    <a class="nav-link text-white" asp-area="" asp-page="/CRUDS/FE_Roles">Gestión de Roles</a>
+                </li>
+                <li>
+                    <a class="nav-link text-white" asp-area="" asp-page="/CRUDS/FE_CategoriaTatuajes">Categorías Tatuajes</a>
+                </li>
+                <li>
+                    <a class="nav-link text-white" asp-area="" asp-page="/CRUDS/FE_Especialidades">Especialidades</a>
+                </li>
+                <li>
+                    <a class="nav-link text-white" asp-area="" asp-page="/CRUDS/FE_Membresias">Membresías</a>
+                </li>
+                <li>
+                    <a class="nav-link text-white" asp-area="" asp-page="/CRUDS/FE_MembresiaContenido">Contenido Membresías</a>
+                </li>
+                <li>
+                    <a class="nav-link text-white" asp-area="" asp-page="/CRUDS/FE_AprobacionTestimonio">Aprobacion Testimonio</a>
+                </li>
+                <li>
+                    <a class="nav-link text-white" asp-area="" asp-page="/CRUDS/FE_PrecguntasChatbox">Preguntas Chatbox</a>
+                </li>
+                <li>
+                    <a class="nav-link text-white" asp-area="" asp-page="/CRUDS/FE_RespuestasChatbox">Respuestas Chatbox</a>
+                </li>
+                <li>
+                    <a class="nav-link text-white" asp-area="" asp-page="/CRUDS/CRUD_Artista">Artistas</a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="main-content container-fluid p-4">
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-2">
+        &copy; 2024 - AsistenteAdministrativo. Todos los derechos reservados.
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Scripts específicos de la página -->
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

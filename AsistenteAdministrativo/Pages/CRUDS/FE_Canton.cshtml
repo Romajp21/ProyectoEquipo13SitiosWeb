@@ -1,0 +1,46 @@
+﻿@page
+@model AsistenteAdministrativo.Pages.CRUDS.FE_CantonModel
+
+<h2>Gestión de Cantones</h2>
+
+<form method="post">
+    <div>
+        <label>Nombre del Cantón:</label>
+        <input asp-for="NuevoCanton.NombreCanton" />
+    </div>
+    <div>
+        <label>Provincia:</label>
+        <select asp-for="NuevoCanton.IdProvincia">
+            <option value="">Seleccione una provincia</option>
+            @foreach (var provincia in Model.Provincias)
+            {
+                <option value="@provincia.IdProvincia">@provincia.NombreProvincia</option>
+            }
+        </select>
+    </div>
+    <button type="submit" asp-page-handler="Registrar">Registrar</button>
+</form>
+
+<table>
+    <thead>
+        <tr>
+            <th>Nombre del Cantón</th>
+            <th>Provincia</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Cantones)
+        {
+            <tr>
+                <td>@item.NombreCanton</td>
+                <td>@Model.ObtenerNombreProvincia(item.IdProvincia)</td>
+                <td>
+                    <form method="post" asp-page-handler="Eliminar" asp-route-id="@item.IdCanton">
+                        <button type="submit">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

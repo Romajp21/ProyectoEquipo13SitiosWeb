@@ -1,0 +1,153 @@
+﻿@page
+@model AsistenteAdministrativo.Pages.CRUDS.FE_AprobacionTestimonioModel
+@{
+    ViewData["Title"] = "Aprobación de Testimonios";
+}
+
+<html>
+<head>
+    <title>Aprobación de Testimonios</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: #f8f9fa;
+            color: #343a40;
+        }
+
+        .container {
+            padding: 30px;
+        }
+
+        .table {
+            width: 100%;
+            margin-bottom: 1rem;
+            color: #212529;
+            border-collapse: collapse;
+        }
+
+            .table th,
+            .table td {
+                padding: 0.75rem;
+                text-align: center;
+                border: 1px solid #dee2e6;
+            }
+
+            .table thead th {
+                background-color: #007bff;
+                color: white;
+            }
+
+        .btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-approve {
+            background-color: #28a745;
+            color: #fff;
+        }
+
+            .btn-approve:hover {
+                background-color: #218838;
+            }
+
+        .btn-reject {
+            background-color: #dc3545;
+            color: #fff;
+        }
+
+            .btn-reject:hover {
+                background-color: #c82333;
+            }
+
+        .message {
+            margin-bottom: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+            .message.success {
+                background-color: #28a745;
+                color: white;
+            }
+
+            .message.error {
+                background-color: #dc3545;
+                color: white;
+            }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Aprobación de Testimonios</h1>
+        <p>Revisa y aprueba o rechaza los testimonios enviados por los clientes.</p>
+
+       @*  @if (!string.IsNullOrEmpty(Model.Mensaje))
+        {
+            <div class="message @(Model.Resultado ? "success" : "error")">
+                @Model.Mensaje
+            </div>
+        } *@
+
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID Testimonio</th>
+                    <th>Cliente</th>
+                    <th>Artista</th>
+                    <th>Calificación</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var testimonio in Model.TestimoniosPendientes)
+                {
+                    <tr>
+                        <td>@testimonio.IdTestimonio</td>
+                        <td>@testimonio.Cliente</td>
+                        <td>@testimonio.Artista</td>
+                        <td>@testimonio.Calificacion estrella(s)</td>
+                        <td>@(testimonio.Estado ? "Aprobado" : "Rechazado")</td>
+                        <td>
+                            <form method="post">
+                                <input type="hidden" name="IdTestimonio" value="@testimonio.IdTestimonio" />
+                                <button class="btn btn-approve" type="submit" formaction="?handler=Aprobar">Aprobar</button>
+                                <button class="btn btn-reject" type="submit" formaction="?handler=Rechazar">Rechazar</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
+@if (!string.IsNullOrEmpty(Model.Mensaje))
+{
+    <div id="mensaje" class="message @(Model.Resultado ? "success" : "error")">
+        @Model.Mensaje
+    </div>
+}
+@* 
+<script>
+    // Esconde el mensaje automáticamente después de 5 segundos
+    document.addEventListener("DOMContentLoaded", function () {
+        const mensajeDiv = document.getElementById("mensaje");
+        if (mensajeDiv) {
+            setTimeout(() => {
+                mensajeDiv.style.display = "none"; // Oculta el mensaje
+            }, 5000); // 5000 ms = 5 segundos
+        }
+    });
+</script>
+
+ *@

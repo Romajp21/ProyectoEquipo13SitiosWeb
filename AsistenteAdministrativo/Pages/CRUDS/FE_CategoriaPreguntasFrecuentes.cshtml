@@ -1,0 +1,40 @@
+﻿@page
+@model AsistenteAdministrativo.Pages.CRUDS.FE_CategoriaPreguntasFrecuentesModel
+
+<h2>Gestión de Categorías de Preguntas Frecuentes</h2>
+
+<form method="post">
+    <div>
+        <label>Categoría:</label>
+        <input asp-for="NuevaCategoria.CategoriaPreguntasFrecuentes" />
+    </div>
+    <div>
+        <label>Estado:</label>
+        <input type="checkbox" asp-for="NuevaCategoria.Estado" />
+    </div>
+    <button type="submit" asp-page-handler="Registrar">Registrar</button>
+</form>
+
+<table>
+    <thead>
+        <tr>
+            <th>Categoría</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Categorias)
+        {
+            <tr>
+                <td>@item.CategoriaPreguntasFrecuentes</td>
+                <td>@(item.Estado ? "Activo" : "Inactivo")</td>
+                <td>
+                    <form method="post" asp-page-handler="Eliminar" asp-route-id="@item.IdCategoriaFrecuentes">
+                        <button type="submit">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

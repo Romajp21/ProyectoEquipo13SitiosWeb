@@ -1,0 +1,47 @@
+﻿@page
+@model Artistas.Pages.Perfil.PerfilModel
+@{
+    ViewData["Title"] = "Perfil del Artista";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12 text-center mb-4">
+            <h1 class="text-primary fw-bold">🎭 Perfil del Artista</h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 text-center">
+            <!-- Imagen de perfil -->
+            @if (!string.IsNullOrEmpty(Model.Artista.ImagenPerfil))
+            {
+                <img src="data:image/png;base64,@Model.Artista.ImagenPerfil" alt="Imagen de Perfil" class="img-thumbnail rounded-circle shadow-sm" style="width: 150px; height: 150px;" />
+            }
+            else
+            {
+                <div class="border rounded-circle bg-secondary text-white d-flex justify-content-center align-items-center" style="width: 150px; height: 150px;">
+                    <span>Sin Imagen</span>
+                </div>
+            }
+
+            <form method="post" enctype="multipart/form-data" asp-page-handler="ActualizarImagen" class="mt-3">
+                <div class="mb-3">
+                    <label for="ArchivoImagen" class="form-label">Actualizar Imagen de Perfil</label>
+                    <input type="file" class="form-control" id="ArchivoImagen" name="ArchivoImagen" accept="image/*" required />
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Actualizar Imagen</button>
+            </form>
+        </div>
+
+        <div class="col-md-8">
+            <form method="post" asp-page-handler="ActualizarBio">
+                <div class="mb-3">
+                    <label for="Bio" class="form-label">Biografía</label>
+                    <textarea class="form-control" id="Bio" name="Artista.Bio" rows="5" required>@Model.Artista.Bio</textarea>
+                </div>
+                <button type="submit" class="btn btn-success w-100">Actualizar Biografía</button>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,58 @@
+﻿@page
+@model Artistas.Pages.CRUD.FE_ArtistaCitasModel
+@{
+    ViewData["Title"] = "Gestión de Citas del Artista";
+}
+
+<div class="container mt-4">
+    <h1 class="text-center">Gestión de Citas del Artista</h1>
+    <div class="table-responsive mt-4">
+        <table class="table table-bordered table-hover">
+            <thead class="table-primary">
+                <tr>
+                    <th>Cliente</th>
+                    <th>Fecha</th>
+                    <th>Hora Inicio</th>
+                    <th>Hora Fin</th>
+                    <th>Descripción</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.CitasArtista.Any())
+                {
+                    foreach (var cita in Model.CitasArtista)
+                    {
+                        <tr>
+                            <td>@cita.NombreCliente</td>
+                            <td>@cita.Fecha.ToString("dd/MM/yyyy")</td>
+                            <td>@cita.HoraInicio.ToString(@"hh\:mm")</td>
+                            <td>@cita.HoraFin.ToString(@"hh\:mm")</td>
+                            <td>@cita.Descripcion</td>
+                            <td>@cita.Estado</td>
+                            <td>
+                                @if (cita.Estado.ToLower() != "completado")
+                                {
+                                    <form method="post" asp-page-handler="Completar" asp-route-id="@cita.IdCita" class="d-inline">
+                                        <button class="btn btn-success btn-sm" type="submit">Completar</button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Completado</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="7" class="text-center">No hay citas registradas para este artista.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

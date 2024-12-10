@@ -1,0 +1,48 @@
+﻿@page "{id:int}"
+@model Webapp.Pages.Artista.PerfilModel
+@{
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<div class="perfil-header">
+    <img src="@(string.IsNullOrEmpty(Model.ImagenPerfilRuta)
+        ? "/images/Tatuador1.jpg"
+        : Model.ImagenPerfilRuta)"
+         alt="@Model.Artista.Nombre" class="perfil-imagen" />
+    <h1>@Model.Artista.Nombre @Model.Artista.Apellidos</h1>
+</div>
+
+
+<div class="perfil-bio">
+    <h2>Bio</h2>
+    <p>@Model.Artista.Bio</p> <!-- Mostrar biografía desde la base de datos -->
+</div>
+
+<div class="perfil-especialidades">
+    <h2>Especialidades</h2>
+    <div class="tags">
+        @foreach (var especialidad in Model.Artista.Especialidades)
+        {
+            <span class="tag">@especialidad</span>
+        }
+    </div>
+</div>
+
+<div class="perfil-portafolio">
+    <h2>Portafolio</h2>
+    <div class="portafolio-grid">
+        @foreach (var img in Model.Artista.Portafolio)
+        {
+            <div>
+                <img src="@img.RutaImagen" alt="@img.DescripcionTatuaje" class="portafolio-item" />
+                <p>@img.DescripcionTatuaje</p>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="perfil-reviews">
+    <h2>Reviews</h2>
+    <p>No hay reviews disponibles para este artista.</p>
+</div>
+</div>
